@@ -1,33 +1,33 @@
 <?php
-    if (isset($_GET['username']) && isset($_GET['password'])) {
+    if (isset($_POST['email']) && isset($_POST['password'])) {
         require_once("../koneksi.php");
-        
-        $username = $_GET['username'];
-        $pass = $_GET['password'];
-        
-        $queryCheck = mysqli_query($koneksi, "SELECT * FROM users WHERE username='$username'");
-        if(mysqli_num_rows($queryCheck) == 0){
-            $sql = "INSERT INTO users (username, password) VALUES ('$username', '$pass')";
-            
+
+        $username = $_POST['username'];
+        $email = $_POST['email'];
+        $pass = $_POST['password'];
+        $queryCheckEmail = mysqli_query($koneksi, "SELECT * FROM users WHERE email='$email'");
+            if(mysqli_num_rows($queryCheckEmail) == 0){
+            $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$pass')";
+
             if($query = mysqli_query($koneksi, $sql)){
                 $data = array(
                     'status' => true,
-                    'message' => $username." has been added."
+                    'message' => $username." berhasil didaftarkan, silahkan login."
                 );
-                
+
                 echo json_encode($data);
             } else {
                 $data = array(
                     'status' => false,
                     'message' => "Failure to add"
                 );
-                
+
                 echo json_encode($data);
             }
         } else {
             $data = array(
                 'status' => false,
-                'message' => "username already exist"
+                'message' => "akun dengan email tersebut sudah terdaftar, silahkan menggunakan email lain."
             );
             
             echo json_encode($data);

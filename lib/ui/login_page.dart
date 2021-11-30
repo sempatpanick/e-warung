@@ -1,9 +1,14 @@
 import 'package:ewarung/common/styles.dart';
+import 'package:ewarung/data/model/login_result.dart';
+import 'package:ewarung/provider/login_provider.dart';
+import 'package:ewarung/ui/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
+  static const routeName = '/login';
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -12,12 +17,15 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
+    LoginProvider auth = Provider.of<LoginProvider>(context);
+
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: _isLoading ? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 45.0, horizontal: 43.0),
             child: Column(
@@ -79,10 +87,19 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 22,),
                 SizedBox(
-                  width: double.infinity,
+                  width: MediaQuery.of(context).size.width,
                   height: 40.0,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (_emailTextController.text.isEmpty || _passwordTextController.text.isEmpty) {
+                        showNotification(context, "Username or password can't be empty");
+                      } else {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        signIn(auth);
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       primary: primaryColor,
                       shape: RoundedRectangleBorder(
@@ -109,26 +126,26 @@ class _LoginPageState extends State<LoginPage> {
                     const Text("or"),
                     Expanded(
                       child: Container(
-                          margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-                          child: const Divider(
-                            color: primaryColor,
-                            height: 1,
-                          ),
+                        margin: const EdgeInsets.only(left: 20.0, right: 10.0),
+                        child: const Divider(
+                          color: primaryColor,
+                          height: 1,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16,),
                 SizedBox(
-                  width: double.infinity,
+                  width: MediaQuery.of(context).size.width,
                   height: 40.0,
                   child: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       primary: textColorWhite,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                        side: const BorderSide(color: primaryColor)
+                          borderRadius: BorderRadius.circular(18.0),
+                          side: const BorderSide(color: primaryColor)
                       ),
                     ),
                     child: Text(
@@ -143,6 +160,37 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  signIn(LoginProvider auth) async {
+    try {
+      final Future<LoginResult> response = auth.fetchLogin(_emailTextController.text, _passwordTextController.text);
+
+      response.then((value) {
+        if (value.status) {
+          setState(() {
+            _isLoading = false;
+          });
+          Navigator.pushReplacementNamed(context, HomePage.routeName);
+          showNotification(context, value.data!.email);
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+          showNotification(context, value.message);
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      showNotification(context, "Error : $e");
+    }
+  }
+
+  void showNotification(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override

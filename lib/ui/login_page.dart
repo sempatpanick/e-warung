@@ -1,6 +1,7 @@
 import 'package:ewarung/common/styles.dart';
 import 'package:ewarung/data/model/login_result.dart';
 import 'package:ewarung/provider/login_provider.dart';
+import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:ewarung/ui/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     LoginProvider auth = Provider.of<LoginProvider>(context);
+    PreferencesProvider pref = Provider.of<PreferencesProvider>(context);
 
     return Scaffold(
       body: SafeArea(
@@ -97,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                         setState(() {
                           _isLoading = true;
                         });
-                        signIn(auth);
+                        signIn(auth, pref);
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -162,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  signIn(LoginProvider auth) async {
+  signIn(LoginProvider auth, PreferencesProvider pref) async {
     try {
       final Future<LoginResult> response = auth.fetchLogin(_emailTextController.text, _passwordTextController.text);
 
@@ -171,8 +173,9 @@ class _LoginPageState extends State<LoginPage> {
           setState(() {
             _isLoading = false;
           });
+          pref.setUserLogin(value.user!);
           Navigator.pushReplacementNamed(context, HomePage.routeName);
-          showNotification(context, value.data!.email);
+          showNotification(context, "Welcome ${value.user!.nama!.isNotEmpty ? value.user!.nama : value.user!.email}");
         } else {
           setState(() {
             _isLoading = false;

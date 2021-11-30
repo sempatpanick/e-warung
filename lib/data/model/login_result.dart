@@ -2,17 +2,17 @@ class LoginResult {
   LoginResult({
     required this.status,
     required this.message,
-    this.data,
+    this.user,
   });
 
   bool status;
   String message;
-  Data? data;
+  User? user;
 
   factory LoginResult.fromJson1(Map<String, dynamic> json) => LoginResult(
     status: json["status"],
     message: json["message"],
-    data: Data.fromJson(json["data"]),
+    user: User.fromJson(json["data"]),
   );
 
   factory LoginResult.fromJson2(Map<String, dynamic> json) => LoginResult(
@@ -21,14 +21,15 @@ class LoginResult {
   );
 }
 
-class Data {
-  Data({
+class User {
+  User({
     required this.id,
     required this.username,
     required this.email,
     required this.password,
     required this.nama,
     required this.alamat,
+    required this.noTelp,
   });
 
   String id;
@@ -37,14 +38,16 @@ class Data {
   String password;
   String? nama;
   String? alamat;
+  String? noTelp;
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory User.fromJson(Map<String, dynamic> json) => User(
     id: json["id"],
     username: json["username"],
     email: json["email"],
     password: json["password"],
     nama: json["nama"],
     alamat: json["alamat"],
+    noTelp: json["no_telp"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -54,5 +57,6 @@ class Data {
     "password": password,
     "nama": nama,
     "alamat": alamat,
+    "noTelp": noTelp,
   };
 }

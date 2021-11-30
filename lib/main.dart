@@ -13,7 +13,7 @@ import 'data/preferences/preferences_helper.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  var email = prefs.getString("EMAIL");
+  var id = prefs.getString(PreferencesHelper.id);
   runApp(
     MultiProvider(
       providers: [
@@ -27,7 +27,7 @@ Future<void> main() async {
       child: MaterialApp(
         theme: lightTheme,
         navigatorKey: navigatorKey,
-        initialRoute: email == null ? LoginPage.routeName : HomePage.routeName,
+        initialRoute: id == null ? LoginPage.routeName : HomePage.routeName,
         routes: {
           LoginPage.routeName: (context) => const LoginPage(),
           HomePage.routeName: (context) => HomePage(),

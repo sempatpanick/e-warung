@@ -26,8 +26,8 @@ class _HomePageState extends State<HomePage> {
               Text("home page ${pref.userLogin.email}"),
               ElevatedButton(
                 onPressed: () {
-                  pref.removeUserLogin();
                   Navigator.pushReplacementNamed(context, LoginPage.routeName);
+                  pref.removeUserLogin();
                 },
                 child: const Text("Logout"),
               )

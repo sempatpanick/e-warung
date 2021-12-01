@@ -19,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
   bool _isLoading = false;
+  bool _passwordVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +45,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 22,),
                 CupertinoTextField(
                   controller: _emailTextController,
+                  keyboardType: TextInputType.emailAddress,
                   placeholder: 'Email address',
                   placeholderStyle: const TextStyle(
                     color: textFieldColorGrey,
@@ -67,17 +69,30 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 16,),
                 CupertinoTextField(
                   controller: _passwordTextController,
+                  keyboardType: TextInputType.text,
+                  obscureText: _passwordVisible,
                   placeholder: 'Password',
                   placeholderStyle: const TextStyle(
                     color: textFieldColorGrey,
                     fontSize: 16.0,
                   ),
-                  prefix: const Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Icon(
-                      Icons.remove_red_eye_outlined,
-                      size: 20,
-                      color: textFieldColorGrey,
+                  prefix: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: IconButton(
+                        padding: const EdgeInsets.all(0),
+                        alignment: Alignment.centerLeft,
+                        icon: _passwordVisible ? const Icon(Icons.visibility_outlined) : const Icon(Icons.visibility_off_outlined),
+                        iconSize: 22,
+                        color: textFieldColorGrey,
+                        onPressed: () {
+                          setState(() {
+                            _passwordVisible = !_passwordVisible;
+                          });
+                        },
+                      ),
                     ),
                   ),
                   decoration: BoxDecoration(
@@ -175,7 +190,7 @@ class _LoginPageState extends State<LoginPage> {
           });
           pref.setUserLogin(value.user!);
           Navigator.pushReplacementNamed(context, HomePage.routeName);
-          showNotification(context, "Welcome ${value.user!.nama!.isNotEmpty ? value.user!.nama : value.user!.email}");
+          showNotification(context, "Selamat datang ${value.user!.nama ?? value.user!.email}");
         } else {
           setState(() {
             _isLoading = false;

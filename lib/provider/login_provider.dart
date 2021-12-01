@@ -17,7 +17,7 @@ class LoginProvider extends ChangeNotifier {
         return await apiService.login(http.Client(), email, password);
       } else {
         notifyListeners();
-        return LoginResult(status: false, message: "Error connection");
+        return LoginResult(status: false, message: "Tidak ada koneksi internet");
       }
     } catch (e) {
       notifyListeners();

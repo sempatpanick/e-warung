@@ -105,8 +105,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 40.0,
                   child: ElevatedButton(
                     onPressed: () {
+                      String pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                      RegExp regExp = RegExp(pattern);
+
                       if (_emailTextController.text.isEmpty || _passwordTextController.text.isEmpty) {
                         showNotification(context, "Username or password can't be empty");
+                      } else if (!regExp.hasMatch(_emailTextController.text)) {
+                        showNotification(context, "Invalid Email");
                       } else {
                         setState(() {
                           _isLoading = true;

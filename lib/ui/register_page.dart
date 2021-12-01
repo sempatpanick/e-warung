@@ -1,8 +1,6 @@
 import 'package:ewarung/common/styles.dart';
-import 'package:ewarung/data/model/login_result.dart';
-import 'package:ewarung/provider/login_provider.dart';
-import 'package:ewarung/provider/preferences_provider.dart';
-import 'package:ewarung/ui/home_page.dart';
+import 'package:ewarung/data/model/register_result.dart';
+import 'package:ewarung/provider/register_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,8 +21,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    LoginProvider auth = Provider.of<LoginProvider>(context);
-    PreferencesProvider pref = Provider.of<PreferencesProvider>(context);
+    RegisterProvider auth = Provider.of<RegisterProvider>(context);
 
     return Scaffold(
       body: SafeArea(
@@ -114,7 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         setState(() {
                           _isLoading = true;
                         });
-                        signIn(auth, pref);
+                        signUp(auth);
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -183,18 +180,16 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  signIn(LoginProvider auth, PreferencesProvider pref) async {
+  signUp(RegisterProvider auth) async {
     try {
-      final Future<LoginResult> response = auth.fetchLogin(_emailTextController.text, _passwordTextController.text);
+      final Future<RegisterResult> response = auth.fetchRegister(_emailTextController.text, _passwordTextController.text);
 
       response.then((value) {
         if (value.status) {
           setState(() {
             _isLoading = false;
           });
-          pref.setUserLogin(value.user!);
-          Navigator.pushReplacementNamed(context, HomePage.routeName);
-          showNotification(context, "Selamat datang ${value.user!.nama ?? value.user!.email}");
+          showNotification(context, "Akun berhasil didaftarkan, silahkan login");
         } else {
           setState(() {
             _isLoading = false;

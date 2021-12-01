@@ -3,6 +3,7 @@ import 'package:ewarung/provider/login_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:ewarung/ui/home_page.dart';
 import 'package:ewarung/ui/login_page.dart';
+import 'package:ewarung/ui/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,6 +31,7 @@ Future<void> main() async {
         initialRoute: id == null ? LoginPage.routeName : HomePage.routeName,
         routes: {
           LoginPage.routeName: (context) => const LoginPage(),
+          RegisterPage.routeName: (context) => const RegisterPage(),
           HomePage.routeName: (context) => HomePage(),
         },
       ),

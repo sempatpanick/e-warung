@@ -3,20 +3,19 @@ import 'package:ewarung/data/model/login_result.dart';
 import 'package:ewarung/provider/login_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:ewarung/ui/home_page.dart';
-import 'package:ewarung/ui/register_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
-  static const routeName = '/login';
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key}) : super(key: key);
+  static const routeName = '/register';
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
   bool _isLoading = false;
@@ -36,11 +35,11 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
-                  child: Image.asset("assets/img_door_user.png"),
+                  child: Image.asset("assets/img_phone_user.png"),
                 ),
                 const SizedBox(height: 20,),
                 Text(
-                  "Login",
+                  "Register",
                   style: Theme.of(context).textTheme.headline5!.copyWith(color: primaryColor, fontSize: 24.0, fontWeight: FontWeight.bold, letterSpacing: 0.75),
                 ),
                 const SizedBox(height: 22,),
@@ -125,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     child: Text(
-                      "Login",
+                      "Register",
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -160,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        Navigator.pushNamed(context, RegisterPage.routeName);
+                        Navigator.pop(context);
                       });
                     },
                     style: ElevatedButton.styleFrom(
@@ -171,7 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     child: Text(
-                      "Register",
+                      "Login",
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: primaryColor, fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),

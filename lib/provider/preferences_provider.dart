@@ -1,5 +1,6 @@
 import 'package:ewarung/data/model/login_result.dart';
 import 'package:ewarung/data/preferences/preferences_helper.dart';
+import 'package:ewarung/utils/result_state.dart';
 import 'package:flutter/cupertino.dart';
 
 class PreferencesProvider extends ChangeNotifier {
@@ -8,6 +9,9 @@ class PreferencesProvider extends ChangeNotifier {
   PreferencesProvider({required this.preferencesHelper}) {
     _getUserLoginPreferences();
   }
+
+  late ResultState _state;
+  ResultState get state => _state;
 
   User _userLogin = User(id: "", username: "", email: "", password: "", nama: "", alamat: "", noTelp: "", avatar: "");
   User get userLogin => _userLogin;

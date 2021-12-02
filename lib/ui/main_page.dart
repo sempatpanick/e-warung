@@ -1,6 +1,7 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:ewarung/common/styles.dart';
+import 'package:ewarung/provider/cart_provider.dart';
 import 'package:ewarung/ui/cart_page.dart';
 import 'package:ewarung/ui/home_page.dart';
 import 'package:ewarung/ui/list_page.dart';
@@ -8,6 +9,8 @@ import 'package:ewarung/ui/profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
   static const routeName = '/main';
@@ -78,12 +81,33 @@ class _MainPageState extends State<MainPage>  with SingleTickerProviderStateMixi
     );
   }
 
+  Future<void> scanBarcodeNormal(CartProvider pref) async {
+    String barcodeScanRes;
+
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+
+    if (!mounted) return;
+
+    if (barcodeScanRes != "-1") {
+      setState(() {
+        pref.addResultBarcode(barcodeScanRes);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return _bottomNav();
   }
 
   Widget _bottomNav() {
+    CartProvider pref = Provider.of<CartProvider>(context);
+
     return Scaffold(
       body: _listWidget[_bottomNavIndex],
       backgroundColor: colorWhiteBlue,
@@ -108,6 +132,7 @@ class _MainPageState extends State<MainPage>  with SingleTickerProviderStateMixi
             ),
           ),
           onPressed: () {
+            scanBarcodeNormal(pref);
             _animationController.reset();
             _animationController.forward();
           },
@@ -137,7 +162,7 @@ class _MainPageState extends State<MainPage>  with SingleTickerProviderStateMixi
                   style: Theme.of(context).textTheme.subtitle1!.copyWith(color: color, fontSize: 12.0),
                   group: autoSizeGroup,
                 ),
-              )
+              ),
             ],
           );
         },

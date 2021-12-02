@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.csd030.ewarung.ewarung">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
    <application
         android:label="ewarung"
         android:icon="@mipmap/ic_launcher">

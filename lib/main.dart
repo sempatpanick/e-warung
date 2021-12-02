@@ -2,8 +2,12 @@ import 'package:ewarung/common/styles.dart';
 import 'package:ewarung/provider/login_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:ewarung/provider/register_provider.dart';
+import 'package:ewarung/ui/cart_page.dart';
 import 'package:ewarung/ui/home_page.dart';
+import 'package:ewarung/ui/list_page.dart';
 import 'package:ewarung/ui/login_page.dart';
+import 'package:ewarung/ui/main_page.dart';
+import 'package:ewarung/ui/profile_page.dart';
 import 'package:ewarung/ui/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,11 +34,15 @@ Future<void> main() async {
       child: MaterialApp(
         theme: lightTheme,
         navigatorKey: navigatorKey,
-        initialRoute: id == null ? LoginPage.routeName : HomePage.routeName,
+        initialRoute: id == null ? LoginPage.routeName : MainPage.routeName,
         routes: {
           LoginPage.routeName: (context) => const LoginPage(),
           RegisterPage.routeName: (context) => const RegisterPage(),
-          HomePage.routeName: (context) => HomePage(),
+          MainPage.routeName: (context) => const MainPage(),
+          HomePage.routeName: (context) => const HomePage(),
+          ListPage.routeName: (context) => const ListPage(),
+          CartPage.routeName: (context) => const CartPage(),
+          ProfilePage.routeName: (context) => const ProfilePage(),
         },
       ),
     ),

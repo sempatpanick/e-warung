@@ -142,7 +142,10 @@ class _RegisterPageState extends State<RegisterPage> {
                             height: 1,
                           )),
                     ),
-                    const Text("or"),
+                    Text(
+                      "or",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 12.0),
+                    ),
                     Expanded(
                       child: Container(
                         margin: const EdgeInsets.only(left: 20.0, right: 10.0),

@@ -30,6 +30,7 @@ class User {
     required this.nama,
     required this.alamat,
     required this.noTelp,
+    required this.avatar,
   });
 
   String id;
@@ -39,6 +40,7 @@ class User {
   String? nama;
   String? alamat;
   String? noTelp;
+  String? avatar;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
     id: json["id"],
@@ -48,6 +50,7 @@ class User {
     nama: json["nama"],
     alamat: json["alamat"],
     noTelp: json["no_telp"],
+    avatar: json["avatar"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -58,5 +61,6 @@ class User {
     "nama": nama,
     "alamat": alamat,
     "noTelp": noTelp,
+    "avatar": avatar,
   };
 }

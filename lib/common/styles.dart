@@ -5,6 +5,10 @@ const Color primaryColor = Color(0xFF007FFE);
 final Color secondaryColor = Colors.deepOrange;
 const Color textColorWhite = Colors.white;
 const Color textColorGrey = Color(0xFFF1F2F6);
+const Color colorMenu = Color(0xFF1DABFB);
+const Color colorWhiteBlue = Color(0xFFE4F7FE);
+const Color colorLinearStart = Color(0xFF26CAFE);
+const Color colorLinearEnd = Color(0xFF697FFB);
 const Color textFieldColorGrey = Color(0xFF9FA2BC);
 
 ThemeData lightTheme = ThemeData(

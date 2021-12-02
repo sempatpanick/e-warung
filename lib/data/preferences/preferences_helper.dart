@@ -10,6 +10,7 @@ class PreferencesHelper {
   static const nama = 'NAMA';
   static const alamat = 'ALAMAT';
   static const noTelp = 'NO_TELP';
+  static const avatar = 'AVATAR';
 
   Future<User> get getUserLogin async {
     final SharedPreferences prefs = await sharedPreferences;
@@ -20,7 +21,8 @@ class PreferencesHelper {
         password: "",
         nama: prefs.getString(nama) ?? "",
         alamat: prefs.getString(alamat) ?? "",
-        noTelp: prefs.getString(noTelp) ?? ""
+        noTelp: prefs.getString(noTelp) ?? "",
+        avatar: prefs.getString(avatar) ?? "",
     );
     return user;
   }
@@ -34,6 +36,7 @@ class PreferencesHelper {
     prefs.setString(nama, user.nama ?? "");
     prefs.setString(alamat, user.alamat ?? "");
     prefs.setString(noTelp, user.noTelp ?? "");
+    prefs.setString(avatar, user.avatar ?? "");
   }
 
   void removeUserLogin() async {
@@ -45,5 +48,6 @@ class PreferencesHelper {
     prefs.remove(nama);
     prefs.remove(alamat);
     prefs.remove(noTelp);
+    prefs.remove(avatar);
   }
 }

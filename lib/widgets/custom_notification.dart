@@ -9,7 +9,10 @@ class CustomNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(message),
+      child: Text(
+        message,
+        style: Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 16.0),
+      ),
     );
   }
 }

@@ -9,7 +9,7 @@ class PreferencesProvider extends ChangeNotifier {
     _getUserLoginPreferences();
   }
 
-  User _userLogin = User(id: "", username: "", email: "", password: "", nama: "", alamat: "", noTelp: "");
+  User _userLogin = User(id: "", username: "", email: "", password: "", nama: "", alamat: "", noTelp: "", avatar: "");
   User get userLogin => _userLogin;
 
   void _getUserLoginPreferences() async {

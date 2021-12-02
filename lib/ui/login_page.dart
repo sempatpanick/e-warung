@@ -2,7 +2,7 @@ import 'package:ewarung/common/styles.dart';
 import 'package:ewarung/data/model/login_result.dart';
 import 'package:ewarung/provider/login_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
-import 'package:ewarung/ui/home_page.dart';
+import 'package:ewarung/ui/main_page.dart';
 import 'package:ewarung/ui/register_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -146,7 +146,10 @@ class _LoginPageState extends State<LoginPage> {
                             height: 1,
                           )),
                     ),
-                    const Text("or"),
+                    Text(
+                      "or",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 12.0),
+                    ),
                     Expanded(
                       child: Container(
                         margin: const EdgeInsets.only(left: 20.0, right: 10.0),
@@ -199,7 +202,7 @@ class _LoginPageState extends State<LoginPage> {
             _isLoading = false;
           });
           pref.setUserLogin(value.user!);
-          Navigator.pushReplacementNamed(context, HomePage.routeName);
+          Navigator.pushReplacementNamed(context, MainPage.routeName);
           showNotification(context, "Selamat datang ${value.user!.nama ?? value.user!.email}");
         } else {
           setState(() {

@@ -44,6 +44,21 @@ class ProfilePage extends StatelessWidget {
                           ? Image.network(
                               "https://e-warung.my.id/assets/users/${pref.userLogin.id}/${pref.userLogin.avatar ?? ""}",
                               fit: BoxFit.fill,
+                              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                  return const Icon(Icons.broken_image, size: 100.0, color: textColorWhite,);
+                              },
+                              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                if (loadingProgress == null) {
+                                  return child;
+                                }
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  ),
+                                );
+                              },
                             )
                           : const Icon(
                               Icons.person,

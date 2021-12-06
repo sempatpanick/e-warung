@@ -1,7 +1,7 @@
 import 'dart:io';
 
 class GetConnection {
-  final String _baseUrl = "google.com";
+  final String _baseUrl = "e-warung.my.id";
 
   getConnection() async {
     try {

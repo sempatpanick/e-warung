@@ -1,11 +1,17 @@
+import 'dart:async';
+
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:ewarung/common/styles.dart';
+import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:ewarung/provider/cart_provider.dart';
+import 'package:ewarung/provider/preferences_provider.dart';
+import 'package:ewarung/provider/user_provider.dart';
 import 'package:ewarung/ui/cart_page.dart';
 import 'package:ewarung/ui/home_page.dart';
 import 'package:ewarung/ui/list_page.dart';
 import 'package:ewarung/ui/profile_page.dart';
+import 'package:ewarung/widgets/custom_notification_snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +33,8 @@ class _MainPageState extends State<MainPage>  with SingleTickerProviderStateMixi
   late AnimationController _animationController;
   late Animation<double> animation;
   late CurvedAnimation curve;
+  bool deactiveTimer = false;
+  late bool _isFetchDataActivated;
 
   final List<IconData> _listIcon = [
     Icons.home_outlined,
@@ -79,9 +87,11 @@ class _MainPageState extends State<MainPage>  with SingleTickerProviderStateMixi
       const Duration(milliseconds: 500),
           () => _animationController.forward(),
     );
+
+    _isFetchDataActivated = true;
   }
 
-  Future<void> scanBarcodeNormal(CartProvider pref) async {
+  Future<void> scanBarcodeNormal(CartProvider cart) async {
     String barcodeScanRes;
 
     try {
@@ -94,19 +104,73 @@ class _MainPageState extends State<MainPage>  with SingleTickerProviderStateMixi
     if (!mounted) return;
 
     if (barcodeScanRes != "-1") {
-      setState(() {
-        pref.addResultBarcode(barcodeScanRes);
-      });
+      if (cart.listProducts.any((element) => element.idProduk == barcodeScanRes)) {
+        setState(() {
+          cart.addResultBarcode(barcodeScanRes);
+        });
+      } else {
+        CustomNotificationSnackbar(context: context, message: "Produk tersebut tidak tersedia di toko anda");
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    PreferencesProvider pref = Provider.of<PreferencesProvider>(context);
+    UserProvider userProvider = Provider.of<UserProvider>(context);
+    CartProvider cart = Provider.of<CartProvider>(context);
+
+    if (mounted) {
+      Timer t = Timer(const Duration(milliseconds: 500), () {
+        setState(() {
+          deactiveTimer = true;
+        });
+
+        if (_isFetchDataActivated) {
+          try {
+            final Future<ProductsUserResult> responseProducts = userProvider
+                .fetchProductsUser(pref.userLogin.id);
+
+            responseProducts.then((valueProducts) {
+              if (valueProducts.status) {
+                cart.addUserProducts(valueProducts.data ?? []);
+              } else {
+                CustomNotificationSnackbar(context: context, message: valueProducts.message);
+              }
+            });
+            setState(() {
+              _isFetchDataActivated = false;
+            });
+          } catch (e) {
+            setState(() {
+              _isFetchDataActivated = false;
+            });
+
+            CustomNotificationSnackbar(context: context, message: "Error : $e");
+          }
+        }
+      });
+
+      if (deactiveTimer) {
+        setState(() {
+          t.cancel();
+        });
+      } else {
+        if (_isFetchDataActivated) {
+          t;
+        } else {
+          setState(() {
+            t.cancel();
+          });
+        }
+      }
+    }
+
     return _bottomNav();
   }
 
   Widget _bottomNav() {
-    CartProvider pref = Provider.of<CartProvider>(context);
+    CartProvider cart = Provider.of<CartProvider>(context);
 
     return Scaffold(
       body: _listWidget[_bottomNavIndex],
@@ -132,7 +196,7 @@ class _MainPageState extends State<MainPage>  with SingleTickerProviderStateMixi
             ),
           ),
           onPressed: () {
-            scanBarcodeNormal(pref);
+            scanBarcodeNormal(cart);
             _animationController.reset();
             _animationController.forward();
           },

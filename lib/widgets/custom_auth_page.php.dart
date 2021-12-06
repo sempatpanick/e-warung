@@ -4,12 +4,14 @@ import 'package:ewarung/data/model/register_result.dart';
 import 'package:ewarung/provider/login_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:ewarung/provider/register_provider.dart';
+import 'package:ewarung/provider/user_provider.dart';
 import 'package:ewarung/ui/main_page.dart';
 import 'package:ewarung/ui/register_page.dart';
 import 'package:ewarung/widgets/custom_notification_snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:string_validator/string_validator.dart';
 
 class CustomAuthPage extends StatefulWidget {
   final bool isLogin;
@@ -30,6 +32,7 @@ class _CustomAuthPageState extends State<CustomAuthPage> {
   Widget build(BuildContext context) {
     LoginProvider authLogin = Provider.of<LoginProvider>(context);
     RegisterProvider authRegister = Provider.of<RegisterProvider>(context);
+    UserProvider userProvider = Provider.of<UserProvider>(context);
     PreferencesProvider pref = Provider.of<PreferencesProvider>(context);
 
     return Scaffold(
@@ -114,18 +117,16 @@ class _CustomAuthPageState extends State<CustomAuthPage> {
                   height: 40.0,
                   child: ElevatedButton(
                     onPressed: () {
-                      String pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                      RegExp regExp = RegExp(pattern);
 
                       if (_emailTextController.text.isEmpty || _passwordTextController.text.isEmpty) {
                         CustomNotificationSnackbar(context: context, message: "Username or password can't be empty");
-                      } else if (!regExp.hasMatch(_emailTextController.text)) {
-                        CustomNotificationSnackbar(context: context, message: "Invalid Email");
-                      } else {
+                      } else if (isEmail(_emailTextController.text)) {
                         setState(() {
                           _isLoading = true;
                         });
-                        widget.isLogin ? signIn(authLogin, pref) : signUp(authRegister);
+                        widget.isLogin ? signIn(authLogin, userProvider, pref) : signUp(authRegister);
+                      } else {
+                        CustomNotificationSnackbar(context: context, message: "Invalid Email");
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -197,7 +198,7 @@ class _CustomAuthPageState extends State<CustomAuthPage> {
     );
   }
 
-  signIn(LoginProvider auth, PreferencesProvider pref) async {
+  signIn(LoginProvider auth, UserProvider userProvider, PreferencesProvider pref) async {
     try {
       final Future<LoginResult> response = auth.fetchLogin(_emailTextController.text, _passwordTextController.text);
 
@@ -206,13 +207,18 @@ class _CustomAuthPageState extends State<CustomAuthPage> {
           setState(() {
             _isLoading = false;
           });
+
           pref.setUserLogin(value.user!);
           Navigator.pushReplacementNamed(context, MainPage.routeName);
-          CustomNotificationSnackbar(context: context, message: "Selamat datang ${value.user!.nama ?? value.user!.email}");
+
+          CustomNotificationSnackbar(context: context,
+              message: "Selamat datang ${value.user!.nama ??
+                  value.user!.email}");
         } else {
           setState(() {
             _isLoading = false;
           });
+
           CustomNotificationSnackbar(context: context, message: value.message);
         }
       });
@@ -220,6 +226,7 @@ class _CustomAuthPageState extends State<CustomAuthPage> {
       setState(() {
         _isLoading = false;
       });
+
       CustomNotificationSnackbar(context: context, message: "Error : $e");
     }
   }
@@ -233,11 +240,13 @@ class _CustomAuthPageState extends State<CustomAuthPage> {
           setState(() {
             _isLoading = false;
           });
+
           CustomNotificationSnackbar(context: context, message: "Akun berhasil didaftarkan, silahkan login");
         } else {
           setState(() {
             _isLoading = false;
           });
+
           CustomNotificationSnackbar(context: context, message: value.message);
         }
       });
@@ -245,6 +254,7 @@ class _CustomAuthPageState extends State<CustomAuthPage> {
       setState(() {
         _isLoading = false;
       });
+
       CustomNotificationSnackbar(context: context, message: "Error : $e");
     }
   }

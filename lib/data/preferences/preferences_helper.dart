@@ -11,7 +11,6 @@ class PreferencesHelper {
   static const alamat = 'ALAMAT';
   static const noTelp = 'NO_TELP';
   static const avatar = 'AVATAR';
-  static const resultBarcode = 'RESULT_BARCODE';
 
   Future<User> get getUserLogin async {
     final SharedPreferences prefs = await sharedPreferences;

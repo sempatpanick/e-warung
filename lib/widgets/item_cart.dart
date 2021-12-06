@@ -1,15 +1,22 @@
+import 'dart:async';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:ewarung/common/styles.dart';
+import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:ewarung/provider/cart_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
+import 'package:ewarung/utils/get_formatted.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
+import 'package:string_validator/string_validator.dart';
 
 class ItemCart extends StatefulWidget {
   final int index;
-  final String id;
-  const ItemCart({Key? key, required this.index, required this.id}) : super(key: key);
+  final Products product;
+  final CartProvider cart;
+  final PreferencesProvider pref;
+  const ItemCart({Key? key, required this.index, required this.product, required this.cart, required this.pref}) : super(key: key);
 
   @override
   State<ItemCart> createState() => _ItemCartState();
@@ -17,6 +24,7 @@ class ItemCart extends StatefulWidget {
 
 class _ItemCartState extends State<ItemCart> {
   final TextEditingController _valueTextController = TextEditingController();
+  bool _isTimerActive = true;
 
   @override
   void initState() {
@@ -25,15 +33,25 @@ class _ItemCartState extends State<ItemCart> {
 
   @override
   Widget build(BuildContext context) {
-    PreferencesProvider pref = Provider.of<PreferencesProvider>(context);
-    CartProvider cart = Provider.of<CartProvider>(context);
     if (mounted) {
       setState(() {
-        _valueTextController.text = cart.amountProduct[widget.index].toString();
+        _valueTextController.text = widget.cart.amountProduct[widget.index].toString();
       });
+      Timer t = Timer(const Duration(milliseconds: 50), () {
+        calculatePrice();
+        _isTimerActive = false;
+      });
+      if (_isTimerActive) {
+        t;
+      } else {
+        setState(() {
+          t.cancel();
+        });
+      }
     }
 
     return Container(
+      padding: const EdgeInsets.all(16.0),
       margin: const EdgeInsets.only(top: 12.0),
       decoration: BoxDecoration(
         color: textColorWhite,
@@ -42,17 +60,31 @@ class _ItemCartState extends State<ItemCart> {
       child: Row(
         children: [
           Container(
-            margin: const EdgeInsets.all(16.0),
             width: 100,
             height: 100,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.0),
               color: primaryColor,
             ),
-            child: pref.userLogin.alamat != ""
+            child: widget.product.gambar != null
                 ? Image.network(
-              "https://e-warung.my.id/assets/users/${pref.userLogin.id}/products/abc ?? ""}",
+              "https://e-warung.my.id/assets/users/${widget.pref.userLogin.id}/products/abc ?? ""}",
               fit: BoxFit.fill,
+              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                return const Icon(Icons.broken_image, size: 70.0, color: textColorWhite,);
+              },
+              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                if (loadingProgress == null) {
+                  return child;
+                }
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
             )
                 : const Icon(
               Icons.shopping_cart_outlined,
@@ -60,17 +92,18 @@ class _ItemCartState extends State<ItemCart> {
               size: 50,
             ),
           ),
+          const SizedBox(width: 16.0,),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoSizeText(
-                  widget.id,
+                  widget.product.nama,
                   style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorBlue, fontSize: 16.0, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8,),
-                Text(
-                  "Rp. 20.000",
+                AutoSizeText(
+                  "Rp. ${GetFormatted().number(int.parse(widget.product.harga != "" ? widget.product.harga : "0"))}",
                   style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textFieldColorGrey, fontSize: 15.0),
                 ),
                 const SizedBox(height: 8,),
@@ -80,10 +113,11 @@ class _ItemCartState extends State<ItemCart> {
                       onTap: () {
                         setState(() {
                           if (int.parse(_valueTextController.text) > 1) {
-                            cart.decreaseAmount(widget.index);
+                            widget.cart.decreaseAmount(widget.index);
                           } else if (_valueTextController.text.isEmpty) {
-                            cart.changeAmount(widget.index, 1);
+                            widget.cart.changeAmount(widget.index, 1);
                           }
+                          calculatePrice();
                         });
                       },
                       child: Container(
@@ -119,13 +153,20 @@ class _ItemCartState extends State<ItemCart> {
                           child: TextField(
                             controller: _valueTextController,
                             keyboardType: TextInputType.number,
+                            maxLength: 3,
+                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
                             textAlign: TextAlign.center,
+                            showCursor: false,
+                            decoration: const InputDecoration(
+                                counterText: ''
+                            ),
                             onChanged: (value) {
-                              if (value == "") {
-                                cart.changeAmount(widget.index, 1);
+                              if (isNumeric(value)) {
+                                widget.cart.changeAmount(widget.index, int.parse(value));
                               } else {
-                                cart.changeAmount(widget.index, int.parse(value));
+                                widget.cart.changeAmount(widget.index, 1);
                               }
+                              calculatePrice();
                             },
                           )
                       ),
@@ -134,10 +175,11 @@ class _ItemCartState extends State<ItemCart> {
                       onTap: () {
                         setState(() {
                           if (_valueTextController.text.isEmpty) {
-                            cart.changeAmount(widget.index, 1);
-                          } else {
-                            cart.increaseAmount(widget.index);
+                            widget.cart.changeAmount(widget.index, 1);
+                          } else if (_valueTextController.text != "999") {
+                            widget.cart.increaseAmount(widget.index);
                           }
+                          calculatePrice();
                         });
                       },
                       child: Container(
@@ -172,7 +214,7 @@ class _ItemCartState extends State<ItemCart> {
               child: IconButton(
                 onPressed: (){
                   setState(() {
-                    cart.removeResultBarcode(widget.index);
+                    widget.cart.removeResultBarcode(widget.index);
                   });
                 },
                 icon: const Icon(
@@ -185,6 +227,11 @@ class _ItemCartState extends State<ItemCart> {
         ],
       ),
     );
+  }
+
+  void calculatePrice() {
+    // int price = widget.cart.amountProduct[widget.index] * int.parse(widget.product.harga);
+    widget.cart.setTotalPrice(widget.index);
   }
 
   @override

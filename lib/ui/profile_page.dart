@@ -1,4 +1,5 @@
 import 'package:ewarung/common/styles.dart';
+import 'package:ewarung/provider/cart_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsFlutterBinding.ensureInitialized();
     PreferencesProvider pref = Provider.of<PreferencesProvider>(context);
+    CartProvider cart = Provider.of<CartProvider>(context);
 
     return Scaffold(
       backgroundColor: colorWhiteBlue,
@@ -87,6 +89,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, LoginPage.routeName);
+                      cart.clearAll();
                       pref.removeUserLogin();
                     },
                     child: Text(

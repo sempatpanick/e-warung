@@ -2,10 +2,10 @@ import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:flutter/cupertino.dart';
 
 class CartProvider extends ChangeNotifier {
-  final List<String> _resultBarcode = ["8993176110081", "8994591070011"];
-  final List<int> _amountProduct = [1, 1];
+  final List<String> _resultBarcode = [];
+  final List<int> _amountProduct = [];
   final List<Products> _listProducts = [];
-  final List<int> _totalPrice = [0, 0];
+  final List<int> _totalPrice = [];
 
   List<String> get resultBarcode => _resultBarcode;
   List<int> get amountProduct => _amountProduct;
@@ -30,6 +30,14 @@ class CartProvider extends ChangeNotifier {
     _resultBarcode.removeAt(index);
     _amountProduct.removeAt(index);
     _totalPrice.removeAt(index);
+    notifyListeners();
+  }
+
+  void clearAll() {
+    _resultBarcode.clear();
+    _amountProduct.clear();
+    _totalPrice.clear();
+    _listProducts.clear();
     notifyListeners();
   }
 

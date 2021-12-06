@@ -4,6 +4,7 @@ import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:ewarung/provider/cart_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:ewarung/utils/get_formatted.dart';
+import 'package:ewarung/widgets/custom_notification_snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -90,6 +91,57 @@ class _ItemProductState extends State<ItemProduct> {
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textFieldColorGrey, fontSize: 15.0),
                     ),
                   ],
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 100,
+            width: 40,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              verticalDirection: VerticalDirection.up,
+              children: [
+                Tooltip(
+                  message: "Add to cart",
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(0),
+                      primary: primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        widget.cart.addResultBarcode(widget.product.idProduk);
+                        CustomNotificationSnackbar(context: context, message: "${widget.product.nama} has added to cart");
+                      });
+                    },
+                    child: const Icon(
+                      Icons.add_shopping_cart,
+                      size: 20.0,
+                      color: textColorWhite,
+                    ),
+                  ),
+                ),
+                Tooltip(
+                  message: "Remove product from store",
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(0),
+                      primary: colorRed,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    onPressed: () {  },
+                    child: const Icon(
+                      Icons.highlight_remove,
+                      size: 20.0,
+                      color: textColorWhite,
+                    ),
+                  ),
                 ),
               ],
             ),

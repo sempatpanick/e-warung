@@ -7,6 +7,7 @@ const Color textColorWhite = Colors.white;
 const Color textColorGrey = Color(0xFFF1F2F6);
 const Color textColorBlue = Color(0xFF7FB9FE);
 const Color colorBlack = Color(0xFF000000);
+const Color colorRed = Color(0xFFDB3545);
 const Color colorMenu = Color(0xFF1DABFB);
 const Color colorWhiteBlue = Color(0xFFE4F7FE);
 const Color colorLinearStart = Color(0xFF26CAFE);

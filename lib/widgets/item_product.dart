@@ -4,6 +4,7 @@ import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:ewarung/provider/cart_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:ewarung/utils/get_formatted.dart';
+import 'package:ewarung/widgets/custom_alert_dialog.dart';
 import 'package:ewarung/widgets/custom_notification_snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -135,7 +136,31 @@ class _ItemProductState extends State<ItemProduct> {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
-                    onPressed: () {  },
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return CustomAlertDialog(
+                            title: Center(
+                              child: Text(
+                                "Remove Product",
+                                style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorBlue, fontSize: 16.0, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            content: Text(
+                              "Are you sure to remove this product from your store?",
+                              style: Theme.of(context).textTheme.subtitle1!.copyWith(color: colorBlack, fontSize: 14.0),
+                            ),
+                            submit: () {
+                              setState(() {
+                                CustomNotificationSnackbar(context: context, message: "remove");
+                                Navigator.pop(context);
+                              });
+                            }
+                          );
+                        }
+                      );
+                    },
                     child: const Icon(
                       Icons.highlight_remove,
                       size: 20.0,

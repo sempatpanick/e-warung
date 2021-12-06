@@ -160,9 +160,13 @@ class _ItemCartState extends State<ItemCart> {
                             decoration: const InputDecoration(
                                 counterText: ''
                             ),
-                            onChanged: (value) {
+                            onSubmitted: (value) {
                               if (isNumeric(value)) {
-                                widget.cart.changeAmount(widget.index, int.parse(value));
+                                if (int.parse(value) < 1) {
+                                  widget.cart.changeAmount(widget.index, 1);
+                                } else {
+                                  widget.cart.changeAmount(widget.index, int.parse(value));
+                                }
                               } else {
                                 widget.cart.changeAmount(widget.index, 1);
                               }

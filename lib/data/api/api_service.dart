@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:ewarung/data/model/delete_product_user_result.dart';
+import 'package:ewarung/data/model/geeneral_result.dart';
 import 'package:ewarung/data/model/detail_product_user_result.dart';
 import 'package:ewarung/data/model/login_result.dart';
 import 'package:ewarung/data/model/products_user_result.dart';
@@ -54,13 +54,30 @@ class ApiService {
     }
   }
 
-  Future<DeleteProductUserResult> deleteProduct(http.Client client, String idUser, String idProduct) async {
+  Future<GeneralResult> deleteProduct(http.Client client, String idUser, String idProduct) async {
     final response = await http.post(Uri.parse(_baseUrl + "/product/delete.php"),
         body: {"id_users": idUser, "id_produk": idProduct});
     if (response.statusCode == 200) {
-      return DeleteProductUserResult.fromJson(json.decode(response.body));
+      return GeneralResult.fromJson(json.decode(response.body));
     } else {
-      return DeleteProductUserResult.fromJson(json.decode('{"status":false,"message":"Failed to delete product"}'));
+      return GeneralResult.fromJson(json.decode('{"status":false,"message":"Failed to delete product"}'));
+    }
+  }
+
+  Future<GeneralResult> saveTransaction(http.Client client, String idUser, int bill, int paid, int changeBill, List<Map> products) async {
+    var body = {
+      "id_user": idUser,
+      "bill": '$bill',
+      "paid": '$paid',
+      "change_bill": '$changeBill',
+      "products": jsonEncode(products)
+    };
+    final response = await http.post(Uri.parse(_baseUrl + "/product/transaction.php"),
+        body: body);
+    if (response.statusCode == 200) {
+      return GeneralResult.fromJson(json.decode(response.body));
+    } else {
+      return GeneralResult.fromJson(json.decode('{"status":false,"message":"Transaction failed"}'));
     }
   }
 }

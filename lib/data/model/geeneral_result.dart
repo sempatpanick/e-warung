@@ -1,5 +1,5 @@
-class DeleteProductUserResult {
-  DeleteProductUserResult({
+class GeneralResult {
+  GeneralResult({
     required this.status,
     required this.message,
   });
@@ -7,7 +7,7 @@ class DeleteProductUserResult {
   bool status;
   String message;
 
-  factory DeleteProductUserResult.fromJson(Map<String, dynamic> json) => DeleteProductUserResult(
+  factory GeneralResult.fromJson(Map<String, dynamic> json) => GeneralResult(
     status: json["status"],
     message: json["message"],
   );

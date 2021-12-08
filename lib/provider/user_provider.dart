@@ -1,5 +1,5 @@
 import 'package:ewarung/data/api/api_service.dart';
-import 'package:ewarung/data/model/delete_product_user_result.dart';
+import 'package:ewarung/data/model/geeneral_result.dart';
 import 'package:ewarung/data/model/detail_product_user_result.dart';
 import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:ewarung/utils/get_connection.dart';
@@ -23,7 +23,7 @@ class UserProvider extends ChangeNotifier {
       }
     } catch (e) {
       notifyListeners();
-      return ProductsUserResult(status: false, message: "Failed to get product");
+      return ProductsUserResult(status: false, message: "Failed to get product, $e");
     }
   }
 
@@ -40,11 +40,11 @@ class UserProvider extends ChangeNotifier {
       }
     } catch (e) {
       notifyListeners();
-      return DetailProductUserResult(status: false, message: "Failed to get product");
+      return DetailProductUserResult(status: false, message: "Failed to get product, $e");
     }
   }
 
-  Future<DeleteProductUserResult> fetchDeleteProductUser(String idUser, String idProduct) async {
+  Future<GeneralResult> fetchDeleteProductUser(String idUser, String idProduct) async {
     try {
       notifyListeners();
       final connection = await _getConnection.getConnection();
@@ -53,11 +53,28 @@ class UserProvider extends ChangeNotifier {
         return await apiService.deleteProduct(http.Client(), idUser, idProduct);
       } else {
         notifyListeners();
-        return DeleteProductUserResult(status: false, message: "Tidak ada koneksi internet");
+        return GeneralResult(status: false, message: "Tidak ada koneksi internet");
       }
     } catch (e) {
       notifyListeners();
-      return DeleteProductUserResult(status: false, message: "Failed to delete product");
+      return GeneralResult(status: false, message: "Failed to delete product, $e");
+    }
+  }
+
+  Future<GeneralResult> fetchTransaction(String idUser, int bill, int paid, int changeBill, List<Map> products) async {
+    try {
+      notifyListeners();
+      final connection = await _getConnection.getConnection();
+      if (connection) {
+        notifyListeners();
+        return await apiService.saveTransaction(http.Client(), idUser, bill, paid, changeBill, products);
+      } else {
+        notifyListeners();
+        return GeneralResult(status: false, message: "Tidak ada koneksi internet");
+      }
+    } catch (e) {
+      notifyListeners();
+      return GeneralResult(status: false, message: "Transaction failed, $e");
     }
   }
 }

@@ -164,8 +164,8 @@ class _ItemCartState extends State<ItemCart> {
                               if (isNumeric(value)) {
                                 if (int.parse(value) < 1) {
                                   widget.cart.changeAmount(widget.index, 1);
-                                } else if (int.parse(value) > int.parse(widget.cart.listProducts[widget.index].stok)) {
-                                  widget.cart.changeAmount(widget.index, int.parse(widget.cart.listProducts[widget.index].stok));
+                                } else if (int.parse(value) > int.parse(widget.product.stok)) {
+                                  widget.cart.changeAmount(widget.index, int.parse(widget.product.stok));
                                 } else {
                                   widget.cart.changeAmount(widget.index, int.parse(value));
                                 }
@@ -182,7 +182,7 @@ class _ItemCartState extends State<ItemCart> {
                         setState(() {
                           if (_valueTextController.text.isEmpty) {
                             widget.cart.changeAmount(widget.index, 1);
-                          } else if ((_valueTextController.text != "999") && (int.parse(_valueTextController.text) < int.parse(widget.cart.listProducts[widget.index].stok))) {
+                          } else if ((_valueTextController.text != "999") && (int.parse(_valueTextController.text) < int.parse(widget.product.stok))) {
                             widget.cart.increaseAmount(widget.index);
                           }
                           calculatePrice();
@@ -236,7 +236,6 @@ class _ItemCartState extends State<ItemCart> {
   }
 
   void calculatePrice() {
-    // int price = widget.cart.amountProduct[widget.index] * int.parse(widget.product.harga);
     widget.cart.setTotalPrice(widget.index);
   }
 

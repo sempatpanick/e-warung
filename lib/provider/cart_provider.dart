@@ -41,6 +41,13 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clear() {
+    _resultBarcode.clear();
+    _amountProduct.clear();
+    _totalPrice.clear();
+    notifyListeners();
+  }
+
   void increaseAmount(int index) {
     _amountProduct[index] += 1;
     notifyListeners();
@@ -63,7 +70,9 @@ class CartProvider extends ChangeNotifier {
   }
 
   void setTotalPrice(int index) {
-    _totalPrice[index] = _amountProduct[index] * int.parse(_listProducts[index].harga);
+    var id = resultBarcode[index];
+    var dataProduct = listProducts.where((element) => element.idProduk == id);
+    _totalPrice[index] = _amountProduct[index] * int.parse(dataProduct.first.harga);
     notifyListeners();
   }
 }

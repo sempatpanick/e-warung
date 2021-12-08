@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:ewarung/common/styles.dart';
-import 'package:ewarung/data/model/delete_product_user_result.dart';
+import 'package:ewarung/data/model/geeneral_result.dart';
 import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:ewarung/provider/cart_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
@@ -162,6 +162,7 @@ class _ItemProductState extends State<ItemProduct> {
                                   setState(() {
                                     _isLoadingDelete = true;
                                   });
+
                                   deleteProduct();
                                   Navigator.pop(context);
                                 }
@@ -193,7 +194,7 @@ class _ItemProductState extends State<ItemProduct> {
 
   deleteProduct() async {
     try {
-      final Future<DeleteProductUserResult> response = widget.userProv.fetchDeleteProductUser(widget.pref.userLogin.id, widget.product.idProduk);
+      final Future<GeneralResult> response = widget.userProv.fetchDeleteProductUser(widget.pref.userLogin.id, widget.product.idProduk);
 
       response.then((value) {
         if (value.status) {

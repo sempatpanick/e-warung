@@ -1,4 +1,5 @@
 import 'package:ewarung/data/api/api_service.dart';
+import 'package:ewarung/data/model/delete_product_user_result.dart';
 import 'package:ewarung/data/model/detail_product_user_result.dart';
 import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:ewarung/utils/get_connection.dart';
@@ -40,6 +41,23 @@ class UserProvider extends ChangeNotifier {
     } catch (e) {
       notifyListeners();
       return DetailProductUserResult(status: false, message: "Failed to get product");
+    }
+  }
+
+  Future<DeleteProductUserResult> fetchDeleteProductUser(String idUser, String idProduct) async {
+    try {
+      notifyListeners();
+      final connection = await _getConnection.getConnection();
+      if (connection) {
+        notifyListeners();
+        return await apiService.deleteProduct(http.Client(), idUser, idProduct);
+      } else {
+        notifyListeners();
+        return DeleteProductUserResult(status: false, message: "Tidak ada koneksi internet");
+      }
+    } catch (e) {
+      notifyListeners();
+      return DeleteProductUserResult(status: false, message: "Failed to delete product");
     }
   }
 }

@@ -2,9 +2,12 @@ import 'package:ewarung/common/styles.dart';
 import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:ewarung/provider/cart_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
+import 'package:ewarung/provider/user_provider.dart';
+import 'package:ewarung/widgets/custom_notification_snackbar.dart';
 import 'package:ewarung/widgets/item_product.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 class ListPage extends StatefulWidget {
@@ -23,14 +26,33 @@ class _ListPageState extends State<ListPage> {
 
   final TextEditingController _searchTextController = TextEditingController();
 
+
   @override
   Widget build(BuildContext context) {
     PreferencesProvider pref = Provider.of<PreferencesProvider>(context);
     CartProvider cart = Provider.of<CartProvider>(context);
+    UserProvider userProv = Provider.of<UserProvider>(context);
 
+    return RefreshIndicator(
+      triggerMode: RefreshIndicatorTriggerMode.anywhere,
+      onRefresh: () async {
+        await userProv.fetchProductsUser(pref.userLogin.id).then((value) {
+          if (value.status) {
+            cart.addUserProducts(value.data ?? []);
+          } else {
+            CustomNotificationSnackbar(context: context, message: value.message);
+          }
+        });
+      },
+      child: _buildPage(pref, cart, userProv),
+    );
+  }
+
+  Widget _buildPage(PreferencesProvider pref, CartProvider cart, UserProvider userProv) {
     return Scaffold(
       backgroundColor: colorWhiteBlue,
       body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         child: SafeArea(
           child: Container(
             margin: const EdgeInsets.all(24.0),
@@ -77,9 +99,9 @@ class _ListPageState extends State<ListPage> {
                   itemCount: _isSearch ? listSearch.length : cart.listProducts.length,
                   itemBuilder: (context, index) {
                     var product = _isSearch ? listSearch[index] : cart.listProducts[index];
-                    return ItemProduct(index: index, product: product, cart: cart, pref: pref,);
+                    return ItemProduct(index: index, product: product, cart: cart, userProv: userProv, pref: pref,);
                   },
-                ),
+                )
               ],
             ),
           ),

@@ -4,6 +4,7 @@ import 'package:ewarung/provider/cart_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:ewarung/provider/user_provider.dart';
 import 'package:ewarung/widgets/custom_notification_snackbar.dart';
+import 'package:ewarung/widgets/expandable_fab.dart';
 import 'package:ewarung/widgets/item_product.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +52,7 @@ class _ListPageState extends State<ListPage> {
   Widget _buildPage(PreferencesProvider pref, CartProvider cart, UserProvider userProv) {
     return Scaffold(
       backgroundColor: colorWhiteBlue,
+      floatingActionButton: const ExpandableFab(),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         child: SafeArea(

@@ -98,6 +98,41 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 16.0,),
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    "About Us",
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.headline4!.copyWith(color: colorBlack),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(16.0),
+                  margin: const EdgeInsets.only(top: 8.0),
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: textColorWhite
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Aplikasi ini dibuat oleh:",
+                        style: Theme.of(context).textTheme.subtitle1!.copyWith(color: colorBlack),
+                      ),
+                      Text(
+                        "1. P007R6010 - Muhammad Dadang Saputra",
+                        style: Theme.of(context).textTheme.subtitle1!.copyWith(color: colorBlack),
+                      ),
+                      Text(
+                        "2. P172R6129 - Steven Rowantio",
+                        style: Theme.of(context).textTheme.subtitle1!.copyWith(color: colorBlack),
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),

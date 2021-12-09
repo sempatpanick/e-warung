@@ -86,15 +86,16 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
             )
           : Container(),
         const FloatingActionButton(
+          backgroundColor: primaryColor,
           onPressed: null,
           tooltip: 'Add Product',
-          child: Icon(Icons.add),
+          child: Icon(Icons.document_scanner_outlined),
         ),
       ],
     );
   }
 
-  Widget addStock() {
+  Widget addProductManual() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -108,12 +109,13 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
                   borderRadius: const BorderRadius.all(Radius.circular(20)),
                 ),
                 child: Text(
-                  "Add Stock",
+                  "Add Product Manually",
                   style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontSize: 16.0, fontWeight: FontWeight.w600),
                 ),
               )
             : Container(),
         const FloatingActionButton(
+          backgroundColor: primaryColor,
           onPressed: null,
           tooltip: 'Add stock',
           child: Icon(Icons.note_add_outlined),
@@ -143,7 +145,7 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
+      children: [
         Transform(
           transform: Matrix4.translationValues(
             0.0,
@@ -158,7 +160,7 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
             _translateButton.value,
             0.0,
           ),
-          child: addStock(),
+          child: addProductManual(),
         ),
         toggle(),
       ],

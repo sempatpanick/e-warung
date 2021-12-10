@@ -4,6 +4,7 @@ import 'package:ewarung/provider/login_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:ewarung/provider/register_provider.dart';
 import 'package:ewarung/provider/user_provider.dart';
+import 'package:ewarung/provider/utils_provider.dart';
 import 'package:ewarung/ui/cart_page.dart';
 import 'package:ewarung/ui/home_page.dart';
 import 'package:ewarung/ui/list_page.dart';
@@ -30,6 +31,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => RegisterProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => UtilsProvider()),
         ChangeNotifierProvider(
           create: (_) => PreferencesProvider(
             preferencesHelper: PreferencesHelper(),

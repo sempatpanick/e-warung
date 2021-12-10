@@ -4,6 +4,7 @@ import 'package:ewarung/data/model/geeneral_result.dart';
 import 'package:ewarung/data/model/detail_product_user_result.dart';
 import 'package:ewarung/data/model/login_result.dart';
 import 'package:ewarung/data/model/products_user_result.dart';
+import 'package:ewarung/data/model/recommended_product_result.dart';
 import 'package:ewarung/data/model/register_result.dart';
 import 'package:http/http.dart' as http;
 
@@ -31,6 +32,26 @@ class ApiService {
       return RegisterResult.fromJson(json.decode(response.body));
     } else {
       return RegisterResult.fromJson(json.decode('{"status":false,"message":"Failed to register"}'));
+    }
+  }
+
+  Future<RecommendedProductResult> getRecommendedProduct(http.Client client, String id) async {
+    final response = await http.post(Uri.parse(_baseUrl + "/product/recommended.php"),
+        body: {"id_product": id});
+    if (response.statusCode == 200) {
+      return RecommendedProductResult.fromJson1(json.decode(response.body));
+    } else {
+      return RecommendedProductResult.fromJson2(json.decode('{"status":false,"message":"Failed to get recommended product"}'));
+    }
+  }
+
+  Future<GeneralResult> addProduct(http.Client client, String idUser, String idProduct, String name, String description, int price, int stock, String image) async {
+    final response = await http.post(Uri.parse(_baseUrl + "/product/add.php"),
+        body: {"id_user": idUser, "id_product": idProduct, "nama": name, "keterangan": description, "harga": "$price", "stok": "$stock", "gambar": image});
+    if (response.statusCode == 200) {
+      return GeneralResult.fromJson(json.decode(response.body));
+    } else {
+      return GeneralResult.fromJson(json.decode('{"status":false,"message":"Failed to add product"}'));
     }
   }
 

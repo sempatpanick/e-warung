@@ -1,4 +1,4 @@
-import 'package:ewarung/widgets/custom_auth_page.php.dart';
+import 'package:ewarung/widgets/custom_auth_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

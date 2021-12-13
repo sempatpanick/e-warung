@@ -45,7 +45,7 @@ class ApiService {
     }
   }
 
-  Future<GeneralResult> addProduct(http.Client client, String idUser, String idProduct, String name, String description, int price, int stock, String image) async {
+  Future<GeneralResult> addProduct(http.Client client, String idUser, String idProduct, String name, String? description, int price, int stock, String image) async {
     final response = await http.post(Uri.parse(_baseUrl + "/product/add.php"),
         body: {"id_user": idUser, "id_product": idProduct, "nama": name, "keterangan": description, "harga": "$price", "stok": "$stock", "gambar": image});
     if (response.statusCode == 200) {

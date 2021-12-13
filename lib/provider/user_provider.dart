@@ -51,7 +51,12 @@ class UserProvider extends ChangeNotifier {
       final connection = await _getConnection.getConnection();
       if (connection) {
         notifyListeners();
-        return await apiService.getProductsUser(http.Client(), idUser);
+        var result = await apiService.getProductsUser(http.Client(), idUser);
+        if (result.data!.isNotEmpty) {
+          return result;
+        } else {
+          return ProductsUserResult(status: true, message: "Tidak ada produk pada toko");
+        }
       } else {
         notifyListeners();
         return ProductsUserResult(status: false, message: "Tidak ada koneksi internet");

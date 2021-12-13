@@ -15,7 +15,7 @@ class CartProvider extends ChangeNotifier {
   void addResultBarcode(String barcode) {
     if (_resultBarcode.contains(barcode)) {
       int index = _resultBarcode.indexOf(barcode);
-      _amountProduct[index] += 1;
+      increaseAmount(index);
       setTotalPrice(index);
     } else {
       _resultBarcode.add(barcode);
@@ -49,7 +49,15 @@ class CartProvider extends ChangeNotifier {
   }
 
   void increaseAmount(int index) {
-    _amountProduct[index] += 1;
+    var id = resultBarcode[index];
+    var dataProduct = listProducts.where((element) => element.idProduk == id);
+    if (_amountProduct[index] >= int.parse(dataProduct.first.stok)) {
+      _amountProduct[index] = int.parse(dataProduct.first.stok);
+    } else if (_amountProduct[index] >= 999) {
+      _amountProduct[index] = 999;
+    } else {
+      _amountProduct[index] += 1;
+    }
     notifyListeners();
   }
 

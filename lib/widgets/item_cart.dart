@@ -182,7 +182,7 @@ class _ItemCartState extends State<ItemCart> {
                         setState(() {
                           if (_valueTextController.text.isEmpty) {
                             widget.cart.changeAmount(widget.index, 1);
-                          } else if ((_valueTextController.text != "999") && (int.parse(_valueTextController.text) < int.parse(widget.product.stok))) {
+                          } else {
                             widget.cart.increaseAmount(widget.index);
                           }
                           calculatePrice();

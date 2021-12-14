@@ -32,7 +32,7 @@ class _FormProductPageState extends State<FormProductPage> {
   final TextEditingController _textDescriptionProductController = TextEditingController();
   final TextEditingController _textPriceProductController = TextEditingController();
   final TextEditingController _textStockProductController = TextEditingController();
-  
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +46,7 @@ class _FormProductPageState extends State<FormProductPage> {
         _textNameProductController.text = widget.utilsProvider.recommendedProduct.nama;
         _textDescriptionProductController.text = widget.utilsProvider.recommendedProduct.keterangan ?? "";
         _textPriceProductController.text = widget.utilsProvider.recommendedProduct.harga;
+        _textStockProductController.text = widget.utilsProvider.recommendedProduct.stok ?? "";
       });
     }
     return Scaffold(
@@ -78,16 +79,17 @@ class _FormProductPageState extends State<FormProductPage> {
                     children: [
                       TextFormField(
                         controller: _textIdProductController,
+                        enabled: widget.utilsProvider.formProduct.type == 'update_product' ? false : true,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: widget.utilsProvider.formProduct.type == 'update_product' ? textFieldColorGrey : textColorWhite,
                           labelText: "ID Product",
                           focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
+                            borderSide: const BorderSide(color: textColorWhite),
                             borderRadius: BorderRadius.circular(25.7),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
+                            borderSide: const BorderSide(color: textColorWhite),
                             borderRadius: BorderRadius.circular(25.7),
                           ),
                         ),
@@ -104,14 +106,14 @@ class _FormProductPageState extends State<FormProductPage> {
                         controller: _textNameProductController,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: textColorWhite,
                           labelText: "Product Name",
                           focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
+                            borderSide: const BorderSide(color: textColorWhite),
                             borderRadius: BorderRadius.circular(25.7),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
+                            borderSide: const BorderSide(color: textColorWhite),
                             borderRadius: BorderRadius.circular(25.7),
                           ),
                         ),
@@ -128,14 +130,14 @@ class _FormProductPageState extends State<FormProductPage> {
                         controller: _textDescriptionProductController,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: textColorWhite,
                           labelText: "Product Description (optional)",
                           focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
+                            borderSide: const BorderSide(color: textColorWhite),
                             borderRadius: BorderRadius.circular(25.7),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
+                            borderSide: const BorderSide(color: textColorWhite),
                             borderRadius: BorderRadius.circular(25.7),
                           ),
                         ),
@@ -145,14 +147,14 @@ class _FormProductPageState extends State<FormProductPage> {
                         controller: _textPriceProductController,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: textColorWhite,
                           labelText: "Product Price",
                           focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
+                            borderSide: const BorderSide(color: textColorWhite),
                             borderRadius: BorderRadius.circular(25.7),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
+                            borderSide: const BorderSide(color: textColorWhite),
                             borderRadius: BorderRadius.circular(25.7),
                           ),
                         ),
@@ -174,14 +176,14 @@ class _FormProductPageState extends State<FormProductPage> {
                         controller: _textStockProductController,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: textColorWhite,
                           labelText: "Product Stock",
                           focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
+                            borderSide: const BorderSide(color: textColorWhite),
                             borderRadius: BorderRadius.circular(25.7),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
+                            borderSide: const BorderSide(color: textColorWhite),
                             borderRadius: BorderRadius.circular(25.7),
                           ),
                         ),
@@ -215,11 +217,19 @@ class _FormProductPageState extends State<FormProductPage> {
                               if (widget.utilsProvider.formProduct.type == "add_product") {
                                 setState(() {
                                   _isLoadingAdd = true;
-                                  widget.utilsProvider.setRecommendedProduct(RecommendedProduct(id: _textIdProductController.text, nama: _textNameProductController.text, keterangan: _textDescriptionProductController.text, harga: _textPriceProductController.text));
+                                  widget.utilsProvider.setRecommendedProduct(RecommendedProduct(id: _textIdProductController.text, nama: _textNameProductController.text, keterangan: _textDescriptionProductController.text, harga: _textPriceProductController.text, stok: _textStockProductController.text));
                                 });
                                 formKey.currentState!.save();
 
                                 addProduct();
+                              } else if (widget.utilsProvider.formProduct.type == "update_product") {
+                                setState(() {
+                                  _isLoadingAdd = true;
+                                  widget.utilsProvider.setRecommendedProduct(RecommendedProduct(id: _textIdProductController.text, nama: _textNameProductController.text, keterangan: _textDescriptionProductController.text, harga: _textPriceProductController.text, stok: _textStockProductController.text));
+                                });
+                                formKey.currentState!.save();
+
+                                updateProduct();
                               }
                             }
                           },
@@ -243,6 +253,56 @@ class _FormProductPageState extends State<FormProductPage> {
   addProduct() async {
     try {
       final Future<GeneralResult> response = widget.userProv.fetchAddProductUser(widget.pref.userLogin.id, _textIdProductController.text, _textNameProductController.text, _textDescriptionProductController.text, int.parse(_textPriceProductController.text), int.parse(_textStockProductController.text), "");
+
+      response.then((value) {
+        if (value.status) {
+          try {
+            final Future<ProductsUserResult> responseProducts = widget.userProv.fetchProductsUser(widget.pref.userLogin.id);
+
+            responseProducts.then((valueProducts) {
+              setState(() {
+                _isLoadingAdd = false;
+              });
+
+              if (valueProducts.status) {
+                setState(() {
+                  widget.cart.addUserProducts(valueProducts.data ?? []);
+                  widget.utilsProvider.setIsFormInputProduct(false);
+                  widget.utilsProvider.setRecommendedProduct(RecommendedProduct(id: "", nama: "", keterangan: "", harga: "", gambar: ""));
+                });
+
+                CustomNotificationSnackbar(context: context, message: value.message);
+              } else {
+                CustomNotificationSnackbar(context: context, message: valueProducts.message);
+              }
+            });
+          } catch (e) {
+            setState(() {
+              _isLoadingAdd = false;
+            });
+
+            CustomNotificationSnackbar(context: context, message: "Error : $e");
+          }
+        } else {
+          setState(() {
+            _isLoadingAdd = false;
+          });
+
+          CustomNotificationSnackbar(context: context, message: value.message);
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingAdd = false;
+      });
+
+      CustomNotificationSnackbar(context: context, message: "Error: $e");
+    }
+  }
+
+  updateProduct() async {
+    try {
+      final Future<GeneralResult> response = widget.userProv.fetchUpdateProductUser(widget.pref.userLogin.id, _textIdProductController.text, _textNameProductController.text, _textDescriptionProductController.text, int.parse(_textPriceProductController.text), int.parse(_textStockProductController.text), "");
 
       response.then((value) {
         if (value.status) {

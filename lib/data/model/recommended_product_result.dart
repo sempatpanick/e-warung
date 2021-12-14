@@ -27,6 +27,7 @@ class RecommendedProduct {
     required this.nama,
     this.keterangan,
     required this.harga,
+    this.stok,
     this.gambar,
   });
 
@@ -34,6 +35,7 @@ class RecommendedProduct {
   String nama;
   String? keterangan;
   String harga;
+  String? stok;
   String? gambar;
 
   factory RecommendedProduct.fromJson(Map<String, dynamic> json) => RecommendedProduct(

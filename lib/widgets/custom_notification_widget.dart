@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class CustomNotification extends StatelessWidget {
+class CustomNotificationWidget extends StatelessWidget {
   final String message;
 
-  const CustomNotification({Key? key, required this.message}) : super(key: key);
+  const CustomNotificationWidget({Key? key, required this.message}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

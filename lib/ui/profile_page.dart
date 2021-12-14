@@ -1,6 +1,7 @@
 import 'package:ewarung/common/styles.dart';
 import 'package:ewarung/provider/cart_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
+import 'package:ewarung/provider/utils_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,7 @@ class ProfilePage extends StatelessWidget {
     WidgetsFlutterBinding.ensureInitialized();
     PreferencesProvider pref = Provider.of<PreferencesProvider>(context);
     CartProvider cart = Provider.of<CartProvider>(context);
+    UtilsProvider utilsProvider = Provider.of<UtilsProvider>(context);
 
     return Scaffold(
       backgroundColor: colorWhiteBlue,
@@ -91,6 +93,7 @@ class ProfilePage extends StatelessWidget {
                       Navigator.pushReplacementNamed(context, LoginPage.routeName);
                       cart.clearAll();
                       pref.removeUserLogin();
+                      utilsProvider.setIsFormInputProduct(false);
                     },
                     child: Text(
                       "Logout",

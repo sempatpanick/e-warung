@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ewarung/data/model/geeneral_result.dart';
 import 'package:ewarung/data/model/detail_product_user_result.dart';
+import 'package:ewarung/data/model/history_transaction_result.dart';
 import 'package:ewarung/data/model/login_result.dart';
 import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:ewarung/data/model/recommended_product_result.dart';
@@ -109,6 +110,16 @@ class ApiService {
       return GeneralResult.fromJson(json.decode(response.body));
     } else {
       return GeneralResult.fromJson(json.decode('{"status":false,"message":"Transaction failed"}'));
+    }
+  }
+
+  Future<HistoryTransactionResult> getHistoryTransaction(http.Client client, String idUser) async {
+    final response = await http.post(Uri.parse(_baseUrl + "/user/history_transaction.php"),
+        body: {"id_user": idUser});
+    if (response.statusCode == 200) {
+      return HistoryTransactionResult.fromJson(json.decode(response.body));
+    } else {
+      return HistoryTransactionResult.fromJson(json.decode('{"status":false,"message":"Failed to delete product","data":[]}'));
     }
   }
 }

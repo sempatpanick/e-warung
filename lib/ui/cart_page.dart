@@ -4,12 +4,16 @@ import 'package:ewarung/data/model/geeneral_result.dart';
 import 'package:ewarung/data/model/product_transaction.dart';
 import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:ewarung/provider/cart_provider.dart';
+import 'package:ewarung/provider/history_transaction_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:ewarung/provider/user_provider.dart';
 import 'package:ewarung/utils/get_formatted.dart';
+import 'package:ewarung/utils/result_state.dart';
 import 'package:ewarung/widgets/custom_alert_dialog.dart';
 import 'package:ewarung/widgets/custom_notification_snackbar.dart';
+import 'package:ewarung/widgets/custom_notification_widget.dart';
 import 'package:ewarung/widgets/item_cart.dart';
+import 'package:ewarung/widgets/item_order_history.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -48,73 +52,120 @@ class _CartPageState extends State<CartPage> {
       }
     }
 
-    return Scaffold(
-      backgroundColor: colorWhiteBlue,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            margin: const EdgeInsets.all(24.0),
-            child: Column(
+    return DefaultTabController(
+      length: 2,
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: primaryColor,
+          appBar: const TabBar(
+            labelColor: textColorWhite,
+            indicatorColor: textColorWhite,
+            unselectedLabelColor: Colors.white54,
+            tabs: [
+              Tab(text: "Cart",),
+              Tab(text: "History Transaction",)
+            ]
+          ),
+          body: Container(
+            color: colorWhiteBlue,
+            child: TabBarView(
               children: [
-                _isLoadingTransaction ? const LinearProgressIndicator() : Container(),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: cart.resultBarcode.length,
-                  itemBuilder: (context, index) {
-                    var id = cart.resultBarcode[index];
-                    var dataProduct = cart.listProducts.where((element) => element.idProduk == id);
-                    if (dataProduct.isNotEmpty) {
-                      product = Products(
-                          id: dataProduct.first.id,
-                          idUsers: dataProduct.first.idUsers,
-                          idProduk: dataProduct.first.idProduk,
-                          nama: dataProduct.first.nama,
-                          keterangan: dataProduct.first.keterangan,
-                          harga: dataProduct.first.harga,
-                          stok: dataProduct.first.stok,
-                          gambar: dataProduct.first.gambar
-                      );
-                      _isLoadingProduct = false;
-                    }
-                    return _isLoadingProduct ? const SizedBox(height: 70.0,child: Center(child: CircularProgressIndicator(),)) : ItemCart(index: index, product: product, cart: cart, pref: pref,);
-                  },
-                ),
-                const SizedBox(height: 16,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                SingleChildScrollView(
+                  child: Container(
+                    margin: const EdgeInsets.all(24.0),
+                    child: Column(
                       children: [
-                        AutoSizeText(
-                          "Total",
-                          style: Theme.of(context).textTheme.subtitle1!.copyWith(color: primaryColor, fontSize: 16.0, fontWeight: FontWeight.bold),
+                        _isLoadingTransaction ? const LinearProgressIndicator() : Container(),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: cart.resultBarcode.length,
+                          itemBuilder: (context, index) {
+                            var id = cart.resultBarcode[index];
+                            var dataProduct = cart.listProducts.where((element) => element.idProduk == id);
+                            if (dataProduct.isNotEmpty) {
+                              product = Products(
+                                  id: dataProduct.first.id,
+                                  idUsers: dataProduct.first.idUsers,
+                                  idProduk: dataProduct.first.idProduk,
+                                  nama: dataProduct.first.nama,
+                                  keterangan: dataProduct.first.keterangan,
+                                  harga: dataProduct.first.harga,
+                                  stok: dataProduct.first.stok,
+                                  gambar: dataProduct.first.gambar
+                              );
+                              _isLoadingProduct = false;
+                            }
+                            return _isLoadingProduct ? const SizedBox(height: 70.0,child: Center(child: CircularProgressIndicator(),)) : ItemCart(index: index, product: product, cart: cart, pref: pref,);
+                          },
                         ),
-                        AutoSizeText(
-                          "Rp. ${GetFormatted().number(cart.totalPrice.sum)}",
-                          style: Theme.of(context).textTheme.subtitle1!.copyWith(color: colorBlack, fontSize: 20.0, fontWeight: FontWeight.bold),
+                        const SizedBox(height: 16,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AutoSizeText(
+                                  "Total",
+                                  style: Theme.of(context).textTheme.subtitle1!.copyWith(color: primaryColor, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                ),
+                                AutoSizeText(
+                                  "Rp. ${GetFormatted().number(cart.totalPrice.sum)}",
+                                  style: Theme.of(context).textTheme.subtitle1!.copyWith(color: colorBlack, fontSize: 20.0, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
+                                primary: primaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
+                              onPressed: _isButtonDisabled ? null : _isLoadingTransaction ? null : () {
+                                checkout(userProv, cart, pref);
+                              },
+                              icon: Icon(Icons.shopping_cart_outlined, color: _isLoadingTransaction ? Colors.transparent : textColorWhite,),
+                              label: _isLoadingTransaction ? const CircularProgressIndicator() : Text(
+                                "Checkout",
+                                style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontSize: 17.0),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
-                        primary: primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      onPressed: _isButtonDisabled ? null : _isLoadingTransaction ? null : () {
-                        checkout(userProv, cart, pref);
-                      },
-                      icon: Icon(Icons.shopping_cart_outlined, color: _isLoadingTransaction ? Colors.transparent : textColorWhite,),
-                      label: _isLoadingTransaction ? const CircularProgressIndicator() : Text(
-                        "Checkout",
-                        style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontSize: 17.0),
-                      ),
+                  ),
+                ),
+                SingleChildScrollView(
+                  child: ChangeNotifierProvider<HistoryTransactionProvider>(
+                    create: (_) => HistoryTransactionProvider(pref.userLogin.id),
+                    child: Consumer<HistoryTransactionProvider>(
+                      builder: (context, state, _) {
+                        if (state.stateHistoryTransaction == ResultState.loading) {
+                          return const Center(child: CircularProgressIndicator(),);
+                        } else if (state.stateHistoryTransaction == ResultState.hasData) {
+                          var dataTransactions = state.resultHistoryTransaction.data;
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: dataTransactions.length,
+                            itemBuilder: (context, index) {
+                              return ItemOrderHistory(dataTransaction: dataTransactions[index]);
+                            }
+                          );
+                        } else if (state.stateHistoryTransaction == ResultState.noData) {
+                          return CustomNotificationWidget(message: state.messageHistoryTransaction);
+                        } else if (state.stateHistoryTransaction == ResultState.error) {
+                          return CustomNotificationWidget(message: state.messageHistoryTransaction);
+                        } else {
+                          return const CustomNotificationWidget(message: "Error: Went Something Wrong..");
+                        }
+                      }
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),

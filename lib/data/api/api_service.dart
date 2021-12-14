@@ -55,6 +55,16 @@ class ApiService {
     }
   }
 
+  Future<GeneralResult> updateProduct(http.Client client, String idUser, String idProduct, String name, String? description, int price, int stock, String image) async {
+    final response = await http.post(Uri.parse(_baseUrl + "/product/update.php"),
+        body: {"id_user": idUser, "id_product": idProduct, "nama": name, "keterangan": description, "harga": "$price", "stok": "$stock", "gambar": image});
+    if (response.statusCode == 200) {
+      return GeneralResult.fromJson(json.decode(response.body));
+    } else {
+      return GeneralResult.fromJson(json.decode('{"status":false,"message":"Failed to update product"}'));
+    }
+  }
+
   Future<ProductsUserResult> getProductsUser(http.Client client, String id) async {
     final response = await http.post(Uri.parse(_baseUrl + "/product/by_shop.php"),
         body: {"id_users": id});
@@ -102,3 +112,4 @@ class ApiService {
     }
   }
 }
+

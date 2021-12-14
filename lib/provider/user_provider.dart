@@ -45,6 +45,23 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  Future<GeneralResult> fetchUpdateProductUser(String idUser, String idProduct, String name, String description, int price, int stock, String image) async {
+    try {
+      notifyListeners();
+      final connection = await _getConnection.getConnection();
+      if (connection) {
+        notifyListeners();
+        return await apiService.updateProduct(http.Client(), idUser, idProduct, name, description, price, stock, image);
+      } else {
+        notifyListeners();
+        return GeneralResult(status: false, message: "Tidak ada koneksi internet");
+      }
+    } catch (e) {
+      notifyListeners();
+      return GeneralResult(status: false, message: "Failed to update product, $e");
+    }
+  }
+
   Future<ProductsUserResult> fetchProductsUser(String idUser) async {
     try {
       notifyListeners();
@@ -118,3 +135,4 @@ class UserProvider extends ChangeNotifier {
     }
   }
 }
+

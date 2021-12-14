@@ -50,12 +50,12 @@ class _ListPageState extends State<ListPage> {
       child: Scaffold(
         backgroundColor: colorWhiteBlue,
         floatingActionButton: const ExpandableFab(),
-        body: utilsProvider.isFormInputProduct ? FormProductPage(utilsProvider: utilsProvider, cart: cart, userProv: userProv, pref: pref,) : _buildListPage(pref, cart, userProv),
+        body: utilsProvider.isFormInputProduct ? FormProductPage(utilsProvider: utilsProvider, cart: cart, userProv: userProv, pref: pref,) : _buildListPage(pref, cart, userProv, utilsProvider),
       ),
     );
   }
 
-  Widget _buildListPage(PreferencesProvider pref, CartProvider cart, UserProvider userProv) {
+  Widget _buildListPage(PreferencesProvider pref, CartProvider cart, UserProvider userProv, UtilsProvider utilsProvider) {
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       child: SafeArea(
@@ -104,7 +104,7 @@ class _ListPageState extends State<ListPage> {
                 itemCount: _isSearch ? listSearch.length : cart.listProducts.length,
                 itemBuilder: (context, index) {
                   var product = _isSearch ? listSearch[index] : cart.listProducts[index];
-                  return ItemProduct(index: index, product: product, cart: cart, userProv: userProv, pref: pref,);
+                  return ItemProduct(index: index, utilsProvider: utilsProvider, product: product, cart: cart, userProv: userProv, pref: pref,);
                 },
               )
             ],
@@ -120,3 +120,4 @@ class _ListPageState extends State<ListPage> {
     super.dispose();
   }
 }
+

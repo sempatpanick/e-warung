@@ -28,13 +28,13 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  Future<GeneralResult> fetchAddProductUser(String idUser, String idProduct, String name, String description, int price, int stock, String image) async {
+  Future<GeneralResult> fetchAddProductUser(String idUser, String idProduct, String name, String description, int price, int stock, String image, String baseImage) async {
     try {
       notifyListeners();
       final connection = await _getConnection.getConnection();
       if (connection) {
         notifyListeners();
-        return await apiService.addProduct(http.Client(), idUser, idProduct, name, description, price, stock, image);
+        return await apiService.addProduct(http.Client(), idUser, idProduct, name, description, price, stock, image, baseImage);
       } else {
         notifyListeners();
         return GeneralResult(status: false, message: "Tidak ada koneksi internet");
@@ -45,13 +45,13 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  Future<GeneralResult> fetchUpdateProductUser(String idUser, String idProduct, String name, String description, int price, int stock, String image) async {
+  Future<GeneralResult> fetchUpdateProductUser(String idUser, String idProduct, String name, String description, int price, int stock, String image, String baseImage) async {
     try {
       notifyListeners();
       final connection = await _getConnection.getConnection();
       if (connection) {
         notifyListeners();
-        return await apiService.updateProduct(http.Client(), idUser, idProduct, name, description, price, stock, image);
+        return await apiService.updateProduct(http.Client(), idUser, idProduct, name, description, price, stock, image, baseImage);
       } else {
         notifyListeners();
         return GeneralResult(status: false, message: "Tidak ada koneksi internet");

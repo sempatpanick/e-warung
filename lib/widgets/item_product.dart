@@ -35,7 +35,7 @@ class _ItemProductState extends State<ItemProduct> {
     return GestureDetector(
       onTap: () {
         FormProduct formProduct = FormProduct(title: "Update Product", type: "update_product");
-        RecommendedProduct recommendedProduct = RecommendedProduct(id: widget.product.idProduk, nama: widget.product.nama, keterangan: widget.product.keterangan, harga: widget.product.harga, stok: widget.product.stok);
+        RecommendedProduct recommendedProduct = RecommendedProduct(id: widget.product.idProduk, nama: widget.product.nama, keterangan: widget.product.keterangan, harga: widget.product.harga, stok: widget.product.stok, gambar: widget.product.gambar ?? "");
         widget.utilsProvider.setIsFormInputProduct(true);
         widget.utilsProvider.setRecommendedProduct(recommendedProduct);
         widget.utilsProvider.setFormProduct(formProduct);
@@ -59,30 +59,36 @@ class _ItemProductState extends State<ItemProduct> {
                     color: primaryColor,
                   ),
                   child: widget.product.gambar != null
-                      ? Image.network(
-                    "https://e-warung.my.id/assets/users/${widget.pref.userLogin.id}/products/abc",
-                    fit: BoxFit.fill,
-                    errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                      return const Icon(Icons.broken_image, size: 70.0, color: textColorWhite,);
-                    },
-                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child;
-                      }
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      );
-                    },
-                  )
+                      ? widget.product.gambar != ""
+                        ? Image.network(
+                            "https://e-warung.my.id/assets/users/${widget.product.gambar}",
+                            fit: BoxFit.fill,
+                            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                              return const Icon(Icons.broken_image, size: 70.0, color: textColorWhite,);
+                            },
+                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) {
+                                return child;
+                              }
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
+                            },
+                          )
+                        : const Icon(
+                            Icons.shopping_cart_outlined,
+                            color: Colors.white,
+                            size: 50 ,
+                          )
                       : const Icon(
-                    Icons.shopping_cart_outlined,
-                    color: Colors.white,
-                    size: 50,
-                  ),
+                          Icons.shopping_cart_outlined,
+                          color: Colors.white,
+                          size: 50 ,
+                        ),
                 ),
                 const SizedBox(width: 16.0,),
                 Expanded(

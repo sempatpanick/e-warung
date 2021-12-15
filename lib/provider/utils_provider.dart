@@ -6,10 +6,12 @@ class UtilsProvider extends ChangeNotifier {
   bool _isFormInputProduct = false;
   RecommendedProduct _recommendedProduct = RecommendedProduct(id: "", nama: "", keterangan: "", harga: "", gambar: "");
   FormProduct _formProduct = FormProduct(title: "", type: "");
+  int _indexBottomNav = 0;
 
   bool get isFormInputProduct => _isFormInputProduct;
   RecommendedProduct get recommendedProduct => _recommendedProduct;
   FormProduct get formProduct => _formProduct;
+  int get indexBottomNav => _indexBottomNav;
 
   void setIsFormInputProduct(bool state) {
     _isFormInputProduct = state;
@@ -23,6 +25,11 @@ class UtilsProvider extends ChangeNotifier {
 
   void setFormProduct(FormProduct formProduct) {
     _formProduct = formProduct;
+    notifyListeners();
+  }
+
+  void setIndexBottomNav(int index) {
+    _indexBottomNav = index;
     notifyListeners();
   }
 }

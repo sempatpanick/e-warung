@@ -7,6 +7,7 @@ import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:ewarung/provider/cart_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:ewarung/provider/user_provider.dart';
+import 'package:ewarung/provider/utils_provider.dart';
 import 'package:ewarung/ui/cart_page.dart';
 import 'package:ewarung/ui/home_page.dart';
 import 'package:ewarung/ui/list_page.dart';
@@ -28,7 +29,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage>  with SingleTickerProviderStateMixin {
-  int _bottomNavIndex = 0;
   final autoSizeGroup = AutoSizeGroup();
   late AnimationController _animationController;
   late Animation<double> animation;
@@ -91,7 +91,7 @@ class _MainPageState extends State<MainPage>  with SingleTickerProviderStateMixi
     _isFetchDataActivated = true;
   }
 
-  Future<void> scanBarcodeNormal(CartProvider cart) async {
+  Future<void> scanBarcodeNormal(CartProvider cart, UtilsProvider utilsProvider) async {
     String barcodeScanRes;
 
     try {
@@ -106,6 +106,7 @@ class _MainPageState extends State<MainPage>  with SingleTickerProviderStateMixi
     if (barcodeScanRes != "-1") {
       if (cart.listProducts.any((element) => element.idProduk == barcodeScanRes)) {
         setState(() {
+          utilsProvider.setIndexBottomNav(2);
           cart.addResultBarcode(barcodeScanRes);
         });
       } else {
@@ -166,14 +167,14 @@ class _MainPageState extends State<MainPage>  with SingleTickerProviderStateMixi
       }
     }
 
-    return _bottomNav();
+    return _bottomNav(cart);
   }
 
-  Widget _bottomNav() {
-    CartProvider cart = Provider.of<CartProvider>(context);
+  Widget _bottomNav(CartProvider cart) {
+    UtilsProvider utilsProvider = Provider.of<UtilsProvider>(context);
 
     return Scaffold(
-      body: _listWidget[_bottomNavIndex],
+      body: _listWidget[utilsProvider.indexBottomNav],
       backgroundColor: colorWhiteBlue,
       floatingActionButton: ScaleTransition(
         scale: animation,
@@ -196,7 +197,7 @@ class _MainPageState extends State<MainPage>  with SingleTickerProviderStateMixi
             ),
           ),
           onPressed: () {
-            scanBarcodeNormal(cart);
+            scanBarcodeNormal(cart, utilsProvider);
             _animationController.reset();
             _animationController.forward();
           },
@@ -233,12 +234,12 @@ class _MainPageState extends State<MainPage>  with SingleTickerProviderStateMixi
         splashColor: primaryColor,
         notchAndCornersAnimation: animation,
         splashSpeedInMilliseconds: 300,
-        activeIndex: _bottomNavIndex,
+        activeIndex: utilsProvider.indexBottomNav,
         gapLocation: GapLocation.center,
         notchSmoothness: NotchSmoothness.softEdge,
         leftCornerRadius: 10,
         rightCornerRadius: 10,
-        onTap: (index) => setState(() => _bottomNavIndex = index),
+        onTap: (index) => setState(() => utilsProvider.setIndexBottomNav(index)),
       ),
     );
   }

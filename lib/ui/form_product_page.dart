@@ -17,7 +17,6 @@ import 'package:path/path.dart' as path;
 import 'package:string_validator/string_validator.dart';
 
 class FormProductPage extends StatefulWidget {
-  static const routeName = '/form_product_page';
   final UtilsProvider utilsProvider;
   final CartProvider cart;
   final UserProvider userProv;
@@ -40,9 +39,8 @@ class _FormProductPageState extends State<FormProductPage> {
   final TextEditingController _textPriceProductController = TextEditingController();
   final TextEditingController _textStockProductController = TextEditingController();
 
-  Future<void> chooseImage() async {
-    final choseImage = await _picker.pickImage(source: ImageSource.gallery);
-    //set source: ImageSource.camera to get image from camera
+  Future<void> chooseImage(ImageSource source) async {
+    final choseImage = await _picker.pickImage(source: source, imageQuality: 25);
     setState(() {
       imageChoosed = choseImage;
     });
@@ -61,6 +59,8 @@ class _FormProductPageState extends State<FormProductPage> {
             ),
             TextButton(
               onPressed: () {
+                Navigator.of(context).pop(false);
+                widget.utilsProvider.setIsFormInputProduct(false);
               },
               child: const Text('Yes'),
             ),
@@ -113,7 +113,61 @@ class _FormProductPageState extends State<FormProductPage> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            chooseImage();
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18.0),
+                                    ),
+                                    title: const Center(child: Text("Select From"),),
+                                    content:  Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ElevatedButton.icon(
+                                          onPressed: () {
+                                            setState(() {
+                                              Navigator.pop(context);
+                                            });
+                                            chooseImage(ImageSource.gallery);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            primary: primaryColor
+                                          ),
+                                          icon: const Icon(Icons.photo),
+                                          label: const Text("Gallery"),
+                                        ),
+                                        ElevatedButton.icon(
+                                          onPressed: () {
+                                            setState(() {
+                                              Navigator.pop(context);
+                                            });
+                                            chooseImage(ImageSource.gallery);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              primary: primaryColor
+                                          ),
+                                          icon: const Icon(Icons.camera_alt),
+                                          label: const Text("Camera"),
+                                        ),
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text(
+                                          'Cancel',
+                                          style: TextStyle(color: textFieldColorGrey),
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            Navigator.pop(context);
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                }
+                            );
                           },
                           child: Container(
                             width: 100,

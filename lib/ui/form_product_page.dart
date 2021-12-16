@@ -52,9 +52,11 @@ class _FormProductPageState extends State<FormProductPage> {
         builder: (context) => AlertDialog(
           title: const Text('Are you sure?'),
           content: const Text('Do you want to cancel this form?'),
-          actions: <Widget>[
+          actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
               child: const Text('No'),
             ),
             TextButton(
@@ -127,6 +129,7 @@ class _FormProductPageState extends State<FormProductPage> {
                                         ElevatedButton.icon(
                                           onPressed: () {
                                             setState(() {
+                                              setProductForm();
                                               Navigator.pop(context);
                                             });
                                             chooseImage(ImageSource.gallery);
@@ -140,6 +143,7 @@ class _FormProductPageState extends State<FormProductPage> {
                                         ElevatedButton.icon(
                                           onPressed: () {
                                             setState(() {
+                                              setProductForm();
                                               Navigator.pop(context);
                                             });
                                             chooseImage(ImageSource.camera);
@@ -159,6 +163,7 @@ class _FormProductPageState extends State<FormProductPage> {
                                           style: TextStyle(color: textFieldColorGrey),
                                         ),
                                         onPressed: () {
+                                          setProductForm();
                                           setState(() {
                                             Navigator.pop(context);
                                           });
@@ -341,13 +346,9 @@ class _FormProductPageState extends State<FormProductPage> {
                               ),
                             ),
                             onPressed: _isLoadingAdd ? null : () {
+                              setProductForm();
                               final isValid = formKey.currentState!.validate();
                               if (isValid) {
-                                if (imageChoosed != null) {
-                                  widget.utilsProvider.setRecommendedProduct(RecommendedProduct(id: _textIdProductController.text, nama: _textNameProductController.text, keterangan: _textDescriptionProductController.text, harga: _textPriceProductController.text, stok: _textStockProductController.text, gambar: "${widget.pref.userLogin.id}/products/${path.basename(imageChoosed!.path)}"));
-                                } else {
-                                  widget.utilsProvider.setRecommendedProduct(RecommendedProduct(id: _textIdProductController.text, nama: _textNameProductController.text, keterangan: _textDescriptionProductController.text, harga: _textPriceProductController.text, stok: _textStockProductController.text, gambar: widget.utilsProvider.recommendedProduct.gambar));
-                                }
                                 if (widget.utilsProvider.formProduct.type == "add_product") {
                                   setState(() {
                                     _isLoadingAdd = true;
@@ -496,6 +497,14 @@ class _FormProductPageState extends State<FormProductPage> {
       });
 
       CustomNotificationSnackbar(context: context, message: "Error: $e");
+    }
+  }
+
+  void setProductForm() {
+    if (imageChoosed != null) {
+      widget.utilsProvider.setRecommendedProduct(RecommendedProduct(id: _textIdProductController.text, nama: _textNameProductController.text, keterangan: _textDescriptionProductController.text, harga: _textPriceProductController.text, stok: _textStockProductController.text, gambar: "${widget.pref.userLogin.id}/products/${path.basename(imageChoosed!.path)}"));
+    } else {
+      widget.utilsProvider.setRecommendedProduct(RecommendedProduct(id: _textIdProductController.text, nama: _textNameProductController.text, keterangan: _textDescriptionProductController.text, harga: _textPriceProductController.text, stok: _textStockProductController.text, gambar: widget.utilsProvider.recommendedProduct.gambar));
     }
   }
 

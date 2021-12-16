@@ -1,6 +1,7 @@
 import 'package:ewarung/common/styles.dart';
 import 'package:ewarung/provider/cart_provider.dart';
 import 'package:ewarung/provider/login_provider.dart';
+import 'package:ewarung/provider/news_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:ewarung/provider/register_provider.dart';
 import 'package:ewarung/provider/user_provider.dart';
@@ -29,6 +30,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => LoginProvider()),
         ChangeNotifierProvider(create: (_) => RegisterProvider()),
+        ChangeNotifierProvider(create: (_) => NewsProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => UtilsProvider()),

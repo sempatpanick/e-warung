@@ -4,6 +4,7 @@ import 'package:ewarung/data/model/geeneral_result.dart';
 import 'package:ewarung/data/model/detail_product_user_result.dart';
 import 'package:ewarung/data/model/history_transaction_result.dart';
 import 'package:ewarung/data/model/login_result.dart';
+import 'package:ewarung/data/model/news_result.dart';
 import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:ewarung/data/model/recommended_product_result.dart';
 import 'package:ewarung/data/model/register_result.dart';
@@ -33,6 +34,15 @@ class ApiService {
       return RegisterResult.fromJson(json.decode(response.body));
     } else {
       return RegisterResult.fromJson(json.decode('{"status":false,"message":"Failed to register"}'));
+    }
+  }
+
+  Future<NewsResult> getNews(http.Client client) async {
+    final response = await http.get(Uri.parse(_baseUrl + "/news.php"));
+    if (response.statusCode == 200) {
+      return NewsResult.fromJson(json.decode(response.body));
+    } else {
+      return NewsResult.fromJson(json.decode('{"status":false,"message":"Failed to get news","data":[]}'));
     }
   }
 

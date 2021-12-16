@@ -142,7 +142,7 @@ class _FormProductPageState extends State<FormProductPage> {
                                             setState(() {
                                               Navigator.pop(context);
                                             });
-                                            chooseImage(ImageSource.gallery);
+                                            chooseImage(ImageSource.camera);
                                           },
                                           style: ElevatedButton.styleFrom(
                                               primary: primaryColor

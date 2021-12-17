@@ -7,6 +7,7 @@ import 'package:ewarung/provider/register_provider.dart';
 import 'package:ewarung/provider/user_provider.dart';
 import 'package:ewarung/ui/main_page.dart';
 import 'package:ewarung/ui/register_page.dart';
+import 'package:ewarung/utils/encryption.dart';
 import 'package:ewarung/widgets/custom_notification_snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -117,7 +118,6 @@ class _CustomAuthPageState extends State<CustomAuthPage> {
                   height: 40.0,
                   child: ElevatedButton(
                     onPressed: () {
-
                       if (_emailTextController.text.isEmpty || _passwordTextController.text.isEmpty) {
                         CustomNotificationSnackbar(context: context, message: "Username or password can't be empty");
                       } else if (isEmail(_emailTextController.text)) {
@@ -200,7 +200,7 @@ class _CustomAuthPageState extends State<CustomAuthPage> {
 
   signIn(LoginProvider auth, UserProvider userProvider, PreferencesProvider pref) async {
     try {
-      final Future<LoginResult> response = auth.fetchLogin(_emailTextController.text, _passwordTextController.text);
+      final Future<LoginResult> response = auth.fetchLogin(_emailTextController.text, Encryption().generateMd5(_passwordTextController.text));
 
       response.then((value) {
         if (value.status) {
@@ -233,7 +233,7 @@ class _CustomAuthPageState extends State<CustomAuthPage> {
 
   signUp(RegisterProvider auth) async {
     try {
-      final Future<RegisterResult> response = auth.fetchRegister(_emailTextController.text, _passwordTextController.text);
+      final Future<RegisterResult> response = auth.fetchRegister(_emailTextController.text, Encryption().generateMd5(_passwordTextController.text));
 
       response.then((value) {
         if (value.status) {

@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                         Consumer<NewsProvider>(
                             builder: (context, state, _) {
                               if (state.stateNews == ResultState.loading) {
-                                return const Center(child: CircularProgressIndicator(),);
+                                return SizedBox(height: MediaQuery.of(context).size.height/2, child: const Center(child: CircularProgressIndicator(),));
                               } else if (state.stateNews == ResultState.hasData) {
                                 var dataNews = state.resultNews.data;
                                 return ListView.builder(
@@ -113,11 +113,11 @@ class _HomePageState extends State<HomePage> {
                                     }
                                 );
                               } else if (state.stateNews == ResultState.noData) {
-                                return CustomNotificationWidget(message: state.messageNews);
+                                return SizedBox(height: 50, child: CustomNotificationWidget(message: state.messageNews));
                               } else if (state.stateNews == ResultState.error) {
-                                return CustomNotificationWidget(message: state.messageNews);
+                                return SizedBox(height: 50, child: CustomNotificationWidget(message: state.messageNews));
                               } else {
-                                return const CustomNotificationWidget(message: "Error: Went Something Wrong..");
+                                return const SizedBox(height: 50, child: CustomNotificationWidget(message: "Error: Went Something Wrong.."));
                               }
                             }
                         )

@@ -145,7 +145,7 @@ class _CartPageState extends State<CartPage> {
                     child: Consumer<HistoryTransactionProvider>(
                       builder: (context, state, _) {
                         if (state.stateHistoryTransaction == ResultState.loading) {
-                          return const Center(child: CircularProgressIndicator(),);
+                          return SizedBox(height: MediaQuery.of(context).size.height/2, child: const Center(child: CircularProgressIndicator(),));
                         } else if (state.stateHistoryTransaction == ResultState.hasData) {
                           var dataTransactions = state.resultHistoryTransaction.data;
                           return ListView.builder(
@@ -157,11 +157,11 @@ class _CartPageState extends State<CartPage> {
                             }
                           );
                         } else if (state.stateHistoryTransaction == ResultState.noData) {
-                          return CustomNotificationWidget(message: state.messageHistoryTransaction);
+                          return SizedBox(height: 50, child: CustomNotificationWidget(message: state.messageHistoryTransaction));
                         } else if (state.stateHistoryTransaction == ResultState.error) {
-                          return CustomNotificationWidget(message: state.messageHistoryTransaction);
+                          return SizedBox(height: 50, child: CustomNotificationWidget(message: state.messageHistoryTransaction));
                         } else {
-                          return const CustomNotificationWidget(message: "Error: Went Something Wrong..");
+                          return const SizedBox(height: 50, child: CustomNotificationWidget(message: "Error: Went Something Wrong.."));
                         }
                       }
                     ),

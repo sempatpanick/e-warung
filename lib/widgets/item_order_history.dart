@@ -1,5 +1,6 @@
 import 'package:ewarung/common/styles.dart';
 import 'package:ewarung/data/model/history_transaction_result.dart';
+import 'package:ewarung/utils/date_time_helper.dart';
 import 'package:ewarung/utils/get_formatted.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +14,6 @@ class ItemOrderHistory extends StatefulWidget {
 }
 
 class _ItemOrderHistoryState extends State<ItemOrderHistory> {
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     List<DataRow> listItem = [];
@@ -69,7 +64,14 @@ class _ItemOrderHistoryState extends State<ItemOrderHistory> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text("Date Time"),
-              Text(widget.dataTransaction.datetimeTransaction.toString()),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(DateTimeHelper().dateFormat(widget.dataTransaction.datetimeTransaction)),
+                  Text(DateTimeHelper().timeFormat(widget.dataTransaction.datetimeTransaction)),
+                ],
+              ),
             ],
           ),
           const Text("Items"),

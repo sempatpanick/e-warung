@@ -15,6 +15,8 @@ import 'package:ewarung/ui/profile_page.dart';
 import 'package:ewarung/ui/register_page.dart';
 import 'package:ewarung/ui/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,6 +24,8 @@ import 'common/navigation.dart';
 import 'data/preferences/preferences_helper.dart';
 
 Future<void> main() async {
+  await initializeDateFormatting('id');
+  Intl.defaultLocale = 'id_ID';
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String idUser = prefs.getString(PreferencesHelper.id) ?? "";

@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:ewarung/common/styles.dart';
 import 'package:ewarung/data/model/news_result.dart';
+import 'package:ewarung/utils/date_time_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +28,7 @@ class ItemNews extends StatelessWidget {
           Row(
             children: [
               AutoSizeText(
-                "${news.author} - ${news.date.day}/${news.date.month}/${news.date.year}",
+                "${news.author} - ${DateTimeHelper().dateFormat(news.date)}",
                 style: Theme.of(context).textTheme.subtitle2!.copyWith(color: textFieldColorGrey, fontSize: 12.0, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal,),
               ),
             ],

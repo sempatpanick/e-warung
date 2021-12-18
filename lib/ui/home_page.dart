@@ -98,28 +98,33 @@ class _HomePageState extends State<HomePage> {
                             style: Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 20.0,),
                           ),
                         ),
+                        const SizedBox(height: 10,),
                         Consumer<NewsProvider>(
-                            builder: (context, state, _) {
-                              if (state.stateNews == ResultState.loading) {
-                                return SizedBox(height: MediaQuery.of(context).size.height/2, child: const Center(child: CircularProgressIndicator(),));
-                              } else if (state.stateNews == ResultState.hasData) {
-                                var dataNews = state.resultNews.data;
-                                return ListView.builder(
+                          builder: (context, state, _) {
+                            if (state.stateNews == ResultState.loading) {
+                              return SizedBox(height: MediaQuery.of(context).size.height/2, child: const Center(child: CircularProgressIndicator(),));
+                            } else if (state.stateNews == ResultState.hasData) {
+                              var dataNews = state.resultNews.data;
+                              return MediaQuery.removePadding(
+                                context: context,
+                                removeTop: true,
+                                child: ListView.builder(
                                     shrinkWrap: true,
                                     physics: const NeverScrollableScrollPhysics(),
                                     itemCount: dataNews.length,
                                     itemBuilder: (context, index) {
                                       return ItemNews(news: dataNews[index]);
                                     }
-                                );
-                              } else if (state.stateNews == ResultState.noData) {
-                                return SizedBox(height: 50, child: CustomNotificationWidget(message: state.messageNews));
-                              } else if (state.stateNews == ResultState.error) {
-                                return SizedBox(height: 50, child: CustomNotificationWidget(message: state.messageNews));
-                              } else {
-                                return const SizedBox(height: 50, child: CustomNotificationWidget(message: "Error: Went Something Wrong.."));
-                              }
+                                ),
+                              );
+                            } else if (state.stateNews == ResultState.noData) {
+                              return SizedBox(height: 50, child: CustomNotificationWidget(message: state.messageNews));
+                            } else if (state.stateNews == ResultState.error) {
+                              return SizedBox(height: 50, child: CustomNotificationWidget(message: state.messageNews));
+                            } else {
+                              return const SizedBox(height: 50, child: CustomNotificationWidget(message: "Error: Went Something Wrong.."));
                             }
+                          }
                         )
                       ],
                     )

@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ChangeNotifierProvider<SummaryProvider>(
-                      create: (_) => SummaryProvider(pref.userLogin.id),
+                      create: (_) => SummaryProvider(idUser: pref.userLogin.id),
                       child: Consumer<SummaryProvider>(
                         builder: (context, state, _) {
                           if (state.stateSummary == ResultState.loading) {

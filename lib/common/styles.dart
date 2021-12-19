@@ -13,6 +13,15 @@ const Color colorWhiteBlue = Color(0xFFE4F7FE);
 const Color colorLinearStart = Color(0xFF26CAFE);
 const Color colorLinearEnd = Color(0xFF697FFB);
 const Color textFieldColorGrey = Color(0xFF9FA2BC);
+const Color colorDashboardRed = Color(0xFFE42E2E);
+const Color colorDashboardGreen = Color(0xFF12BE24);
+const Color colorDashboardPurple = Color(0xFF8832FE);
+const Color colorDashboardOrange = Color(0xFFFC6632);
+const Color colorDashboardBlue = Color(0xFF3361FE);
+const Color colorDashboardPattern1 = Color(0xFF375D96);
+const Color colorDashboardPattern2 = Color(0xFFF96442);
+const Color colorDashboardPattern3 = Color(0xFFFDB801);
+const Color colorDashboardPattern4 = Color(0xFF3F661C);
 
 ThemeData lightTheme = ThemeData(
   primaryColor: primaryColor,

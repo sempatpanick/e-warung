@@ -1,7 +1,10 @@
 import 'package:ewarung/common/styles.dart';
+import 'package:ewarung/data/model/summary_result.dart';
 import 'package:ewarung/provider/news_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
+import 'package:ewarung/provider/summary_provider.dart';
 import 'package:ewarung/provider/utils_provider.dart';
+import 'package:ewarung/utils/get_formatted.dart';
 import 'package:ewarung/utils/result_state.dart';
 import 'package:ewarung/widgets/custom_notification_widget.dart';
 import 'package:ewarung/widgets/item_news.dart';
@@ -88,6 +91,26 @@ class _HomePageState extends State<HomePage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    ChangeNotifierProvider<SummaryProvider>(
+                      create: (_) => SummaryProvider(pref.userLogin.id),
+                      child: Consumer<SummaryProvider>(
+                        builder: (context, state, _) {
+                          if (state.stateSummary == ResultState.loading) {
+                            return _buildLoadingSummary();
+                          } else if (state.stateSummary == ResultState.hasData) {
+                            var dataSummary = state.resultSummary.data;
+                            return _buildSummary(dataSummary!);
+                          } else if (state.stateSummary == ResultState.noData) {
+                            return SizedBox(height: 50, child: CustomNotificationWidget(message: state.messageSummary));
+                          } else if (state.stateSummary == ResultState.error) {
+                            return SizedBox(height: 50, child: CustomNotificationWidget(message: state.messageSummary));
+                          } else {
+                            return const SizedBox(height: 50, child: CustomNotificationWidget(message: "Error: Went Something Wrong.."));
+                          }
+                        }
+                      ),
+                    ),
+                    const SizedBox(height: 16.0,),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -133,6 +156,314 @@ class _HomePageState extends State<HomePage> {
               )
             ],
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSummary(Summary summary) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0,),
+          child: Text(
+            "Orders",
+            style: Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 20.0,),
+          ),
+        ),
+        const SizedBox(height: 16.0,),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 150,
+                height: 90,
+                padding: const EdgeInsets.all(16.0),
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0),
+                decoration: BoxDecoration(
+                    color: colorDashboardRed,
+                    borderRadius: BorderRadius.circular(10.0)
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Total Orders",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      GetFormatted().number(summary.totalOrders),
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 150,
+                height: 90,
+                padding: const EdgeInsets.all(16.0),
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0),
+                decoration: BoxDecoration(
+                    color: colorDashboardOrange,
+                    borderRadius: BorderRadius.circular(10.0)
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Today Orders",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      GetFormatted().number(summary.todayOrders),
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 150,
+                height: 90,
+                padding: const EdgeInsets.all(16.0),
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0),
+                decoration: BoxDecoration(
+                    color: colorDashboardBlue,
+                    borderRadius: BorderRadius.circular(10.0)
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Month Orders",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      GetFormatted().number(summary.monthOrders),
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 150,
+                height: 90,
+                padding: const EdgeInsets.all(16.0),
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0),
+                decoration: BoxDecoration(
+                    color: colorDashboardPurple,
+                    borderRadius: BorderRadius.circular(10.0)
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Year Orders",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      GetFormatted().number(summary.yearOrders),
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16.0,),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0,),
+          child: Text(
+            "Revenue",
+            style: Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 20.0,),
+          ),
+        ),
+        const SizedBox(height: 16.0,),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 150,
+                height: 90,
+                padding: const EdgeInsets.all(16.0),
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0),
+                decoration: BoxDecoration(
+                    color: colorDashboardPattern1,
+                    borderRadius: BorderRadius.circular(10.0)
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Total Revenue",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "Rp. ${GetFormatted().number(summary.totalRevenue)}",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 150,
+                height: 90,
+                padding: const EdgeInsets.all(16.0),
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0),
+                decoration: BoxDecoration(
+                    color: colorDashboardPattern2,
+                    borderRadius: BorderRadius.circular(10.0)
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Today Revenue",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "Rp. ${GetFormatted().number(summary.totalTodayRevenue)}",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 150,
+                height: 90,
+                padding: const EdgeInsets.all(16.0),
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0),
+                decoration: BoxDecoration(
+                    color: colorDashboardPattern3,
+                    borderRadius: BorderRadius.circular(10.0)
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Month Revenue",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "Rp. ${GetFormatted().number(summary.totalMonthRevenue)}",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 150,
+                height: 90,
+                padding: const EdgeInsets.all(16.0),
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0),
+                decoration: BoxDecoration(
+                    color: colorDashboardPattern4,
+                    borderRadius: BorderRadius.circular(10.0)
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Year Revenue",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "Rp. ${GetFormatted().number(summary.totalYearRevenue)}",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16.0,),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0,),
+          child: Text(
+            "Products",
+            style: Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 20.0,),
+          ),
+        ),
+        const SizedBox(height: 16.0,),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 150,
+                height: 90,
+                padding: const EdgeInsets.all(16.0),
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0),
+                decoration: BoxDecoration(
+                    color: colorDashboardGreen,
+                    borderRadius: BorderRadius.circular(10.0)
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Total Products",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      GetFormatted().number(summary.totalProducts),
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLoadingSummary() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0,),
+          child: Text(
+            "Orders",
+            style: Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 20.0,),
+          ),
+        ),
+        const SizedBox(height: 16.0,),
+        const Center(
+          child: CircularProgressIndicator(),
+        ),
+        const SizedBox(height: 16.0,),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0,),
+          child: Text(
+            "Revenue",
+            style: Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 20.0,),
+          ),
+        ),
+        const SizedBox(height: 16.0,),
+        const Center(
+          child: CircularProgressIndicator(),
+        ),
+        const SizedBox(height: 16.0,),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0,),
+          child: Text(
+            "Products",
+            style: Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 20.0,),
+          ),
+        ),
+        const SizedBox(height: 16.0,),
+        const Center(
+          child: CircularProgressIndicator(),
         ),
       ],
     );

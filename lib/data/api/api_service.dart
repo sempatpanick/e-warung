@@ -8,6 +8,7 @@ import 'package:ewarung/data/model/news_result.dart';
 import 'package:ewarung/data/model/products_user_result.dart';
 import 'package:ewarung/data/model/recommended_product_result.dart';
 import 'package:ewarung/data/model/register_result.dart';
+import 'package:ewarung/data/model/summary_result.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -130,6 +131,16 @@ class ApiService {
       return HistoryTransactionResult.fromJson(json.decode(response.body));
     } else {
       return HistoryTransactionResult.fromJson(json.decode('{"status":false,"message":"Failed to delete product","data":[]}'));
+    }
+  }
+
+  Future<SummaryResult> getSummaryStore(http.Client client, String idUser) async {
+    final response = await http.post(Uri.parse(_baseUrl + "/user/summary.php"),
+        body: {"id_user": idUser});
+    if (response.statusCode == 200) {
+      return SummaryResult.fromJson1(json.decode(response.body));
+    } else {
+      return SummaryResult.fromJson2(json.decode('{"status":false,"message":"Failed to delete product"}'));
     }
   }
 }

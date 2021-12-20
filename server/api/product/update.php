@@ -1,23 +1,43 @@
 <?php
-    if (isset($_GET['id_user']) && isset($_GET['id_produk']) && isset($_GET['nama']) && isset($_GET['keterangan']) && isset($_GET['harga']) && isset($_GET['stok']) && isset($_GET['gambar'])) {
+    header('Content-Type: application/json; charset=utf-8');
+    if (isset($_POST['id_user']) && isset($_POST['id_product']) && isset($_POST['nama']) && isset($_POST['harga']) && isset($_POST['stok']) && isset($_POST['gambar'])) {
         require_once("../koneksi.php");
         
-        $id_user = $_GET['id_user'];
-        $id_produk = $_GET['id_produk'];
-        $nama = $_GET['nama'];
-        $keterangan = $_GET['keterangan'];
-        $harga = $_GET['harga'];
-        $stok = $_GET['stok'];
-        $gambar = $_GET['gambar'];
+        $id_user = $_POST['id_user'];
+        $id_product = $_POST['id_product'];
+        $nama = $_POST['nama'];
+        if (isset($_POST['keterangan'])) {
+            $keterangan = $_POST['keterangan'];
+        } else {
+            $keterangan = "";
+        }
+        $harga = $_POST['harga'];
+        $stok = $_POST['stok'];
+        if (isset($_POST['base_image'])) {
+            $base64_string = $_POST["base_image"];
+            if ($base64_string != "") {
+                $gambar = $_POST['gambar'];
+                $savePath = "../../assets/users/".$gambar;
+                // $savePath = "uploads/".$gambar;
+                
+                $filehandler = fopen($savePath, 'wb' ); 
+                
+                fwrite($filehandler, base64_decode($base64_string));
+                fclose($filehandler);
+            } else {
+                $gambar = $_POST['gambar'];
+            }
+        } else {
+            $gambar = $_POST['gambar'];
+        }
         
-        $queryCheckProductUser = mysqli_query($koneksi, "SELECT * FROM produk_toko WHERE id_users='$id_user' AND id_produk='$id_produk'");
+        $queryCheckProductUser = mysqli_query($koneksi, "SELECT * FROM produk_toko WHERE id_users='$id_user' AND id_produk='$id_product'");
         if(mysqli_num_rows($queryCheckProductUser) > 0){
-            $sql = "UPDATE produk_toko SET nama='$nama', keterangan='$keterangan', harga='$harga', stok='$stok', gambar='$gambar' WHERE id_users='$id_user' AND id_produk='$id_produk'";
-            
-            if($query = mysqli_query($koneksi, $sql)){
+            $sql = "UPDATE produk_toko SET nama='$nama', keterangan='$keterangan', harga='$harga', stok='$stok', gambar='$gambar' WHERE id_users='$id_user' AND id_produk='$id_product'";
+            if(mysqli_query($koneksi, $sql)){
                 $data = array(
                     'status' => true,
-                    'message' => "Produk telah diubah"
+                    'message' => "Produk berhasil diubah"
                 );
                 
                 echo json_encode($data);

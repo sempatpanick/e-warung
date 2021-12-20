@@ -1,22 +1,44 @@
 <?php
-    if (isset($_GET['id_user']) && isset($_GET['id_produk']) && isset($_GET['nama']) && isset($_GET['keterangan']) && isset($_GET['harga']) && isset($_GET['stok']) && isset($_GET['gambar'])) {
+    header('Content-Type: application/json; charset=utf-8');
+    if (isset($_POST['id_user']) && isset($_POST['id_product']) && isset($_POST['nama']) && isset($_POST['harga']) && isset($_POST['stok']) && isset($_POST['gambar'])) {
         require_once("../koneksi.php");
         
-        $id_user = $_GET['id_user'];
-        $id_produk = $_GET['id_produk'];
-        $nama = $_GET['nama'];
-        $keterangan = $_GET['keterangan'];
-        $harga = $_GET['harga'];
-        $stok = $_GET['stok'];
-        $gambar = $_GET['gambar'];
-        
-        $queryCheckProduct = mysqli_query($koneksi, "SELECT * FROM produk WHERE id='$id_produk'");
-        if(mysqli_num_rows($queryCheckProduct) == 0){
-            mysqli_query($koneksi, "INSERT INTO produk (id, nama, keterangan, harga, gambar) VALUES ('$id_produk', '$nama', '$keterangan', '$harga', '$gambar')");
+        $id_user = $_POST['id_user'];
+        $id_product = $_POST['id_product'];
+        $nama = $_POST['nama'];
+        if (isset($_POST['keterangan'])) {
+            $keterangan = $_POST['keterangan'];
+        } else {
+            $keterangan = "";
         }
-        $queryCheckProductUser = mysqli_query($koneksi, "SELECT * FROM produk_toko WHERE id_users='$id_user' AND id_produk='$id_produk'");
+        $harga = $_POST['harga'];
+        $stok = $_POST['stok'];
+        if (isset($_POST['base_image'])) {
+            $base64_string = $_POST["base_image"];
+            if ($base64_string != "") {
+                $gambar = $_POST['gambar'];
+                $savePath = "../../assets/users/".$gambar;
+                // $savePath = "uploads/".$gambar;
+                
+                $filehandler = fopen($savePath, 'wb' ); 
+                
+                fwrite($filehandler, base64_decode($base64_string));
+                fclose($filehandler);
+            } else {
+                $gambar = $_POST['gambar'];
+            }
+        } else {
+            $gambar = $_POST['gambar'];
+        }
+        
+        $queryCheckProduct = mysqli_query($koneksi, "SELECT * FROM produk WHERE id='$id_product'");
+        if(mysqli_num_rows($queryCheckProduct) == 0){
+            mysqli_query($koneksi, "INSERT INTO produk (id, nama, keterangan, harga, gambar) VALUES ('$id_product', '$nama', '$keterangan', '$harga', '$gambar')");
+        }
+        
+        $queryCheckProductUser = mysqli_query($koneksi, "SELECT * FROM produk_toko WHERE id_users='$id_user' AND id_produk='$id_product'");
         if(mysqli_num_rows($queryCheckProductUser) == 0){
-            $sql = "INSERT INTO produk_toko (id_users, id_produk, nama, keterangan, harga, stok, gambar) VALUES ('$id_user', '$id_produk', '$nama', '$keterangan', '$harga', '$stok', '$gambar')";
+            $sql = "INSERT INTO produk_toko (id_users, id_produk, nama, keterangan, harga, stok, gambar) VALUES ('$id_user', '$id_product', '$nama', '$keterangan', '$harga', '$stok', '$gambar')";
             
             if($query = mysqli_query($koneksi, $sql)){
                 $data = array(

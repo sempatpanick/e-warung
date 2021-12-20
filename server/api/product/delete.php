@@ -1,9 +1,10 @@
 <?php
-    if (isset($_GET['id_user']) && isset($_GET['id_produk'])) {
+    header('Content-Type: application/json; charset=utf-8');
+    if (isset($_POST['id_users']) && isset($_POST['id_produk'])) {
         require_once("../koneksi.php");
         
-        $id_user = $_GET['id_user'];
-        $id_produk = $_GET['id_produk'];
+        $id_user = $_POST['id_users'];
+        $id_produk = $_POST['id_produk'];
         
         $sql = "DELETE FROM produk_toko WHERE id_users='$id_user' AND id_produk='$id_produk'";
         

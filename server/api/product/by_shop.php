@@ -1,13 +1,14 @@
 <?php
-    if(isset($_GET['id_users']) && isset($_GET['id_produk'])) {
+    header('Content-Type: application/json; charset=utf-8');
+    if(isset($_POST['id_users']) && isset($_POST['id_produk'])) {
         require_once("../koneksi.php");
-        $id_users = $_GET['id_users'];
-        $id_produk = $_GET['id_produk'];
+        $id_users = $_POST['id_users'];
+        $id_produk = $_POST['id_produk'];
         $query = mysqli_query($koneksi, "SELECT * FROM produk_toko WHERE id_users='$id_users' AND id_produk='$id_produk'");
         if(mysqli_num_rows($query) > 0){
             $myArray = array();
             while ($row = $query->fetch_array(MYSQLI_ASSOC)) {
-                $myArray[] = $row;
+                $myArray = $row;
             }
             
             $data = array(
@@ -25,9 +26,9 @@
             
             echo json_encode($data);
         }
-    } else if(isset($_GET['id_users'])) {
+    } else if(isset($_POST['id_users'])) {
         require_once("../koneksi.php");
-        $id_users = $_GET['id_users'];
+        $id_users = $_POST['id_users'];
         $query = mysqli_query($koneksi, "SELECT * FROM produk_toko WHERE id_users='$id_users'");
         if(mysqli_num_rows($query) > 0){
             $myArray = array();
@@ -45,7 +46,8 @@
         } else {
             $data = array(
                 'status' => false,
-                'message' => "id users not found"
+                'message' => "produk toko pada user tidak ada",
+                'data' => []
             );
             
             echo json_encode($data);
@@ -53,7 +55,7 @@
     } else {
         $data = array(
             'status' => false,
-            'message' => "need parameter authentication"
+            'message' => "invalid query parameter"
         );
         
         echo json_encode($data);

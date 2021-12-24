@@ -94,7 +94,6 @@ class ProfilePage extends StatelessWidget {
                       cart.clearAll();
                       pref.removeUserLogin();
                       utilsProvider.setIsFormInputProduct(false);
-                      utilsProvider.setIndexBottomNav(0);
                     },
                     child: Text(
                       "Logout",

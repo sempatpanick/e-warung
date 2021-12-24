@@ -5,6 +5,7 @@ import 'package:ewarung/provider/login_provider.dart';
 import 'package:ewarung/provider/preferences_provider.dart';
 import 'package:ewarung/provider/register_provider.dart';
 import 'package:ewarung/provider/user_provider.dart';
+import 'package:ewarung/provider/utils_provider.dart';
 import 'package:ewarung/ui/main_page.dart';
 import 'package:ewarung/ui/register_page.dart';
 import 'package:ewarung/utils/encryption.dart';
@@ -35,6 +36,7 @@ class _CustomAuthPageState extends State<CustomAuthPage> {
     RegisterProvider authRegister = Provider.of<RegisterProvider>(context);
     UserProvider userProvider = Provider.of<UserProvider>(context);
     PreferencesProvider pref = Provider.of<PreferencesProvider>(context);
+    UtilsProvider utilsProvider = Provider.of<UtilsProvider>(context);
 
     return Scaffold(
       body: SafeArea(
@@ -124,7 +126,7 @@ class _CustomAuthPageState extends State<CustomAuthPage> {
                         setState(() {
                           _isLoading = true;
                         });
-                        widget.isLogin ? signIn(authLogin, userProvider, pref) : signUp(authRegister);
+                        widget.isLogin ? signIn(authLogin, userProvider, pref, utilsProvider) : signUp(authRegister);
                       } else {
                         CustomNotificationSnackbar(context: context, message: "Invalid Email");
                       }
@@ -198,7 +200,9 @@ class _CustomAuthPageState extends State<CustomAuthPage> {
     );
   }
 
-  signIn(LoginProvider auth, UserProvider userProvider, PreferencesProvider pref) async {
+  signIn(LoginProvider auth, UserProvider userProvider, PreferencesProvider pref, UtilsProvider utilsProvider) async {
+    utilsProvider.setIndexBottomNav(0);
+
     try {
       final Future<LoginResult> response = auth.fetchLogin(_emailTextController.text, Encryption().generateMd5(_passwordTextController.text));
 

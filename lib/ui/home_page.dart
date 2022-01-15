@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ewarung/common/styles.dart';
 import 'package:ewarung/data/model/summary_result.dart';
 import 'package:ewarung/provider/news_provider.dart';
@@ -6,9 +8,9 @@ import 'package:ewarung/provider/summary_provider.dart';
 import 'package:ewarung/provider/utils_provider.dart';
 import 'package:ewarung/utils/get_formatted.dart';
 import 'package:ewarung/utils/result_state.dart';
+import 'package:ewarung/widgets/custom_notification_snackbar.dart';
 import 'package:ewarung/widgets/custom_notification_widget.dart';
 import 'package:ewarung/widgets/item_news.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,18 +24,50 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool deactivateTimer = false;
+  bool _isGetSummary = true;
+
   @override
   Widget build(BuildContext context) {
     PreferencesProvider pref = Provider.of<PreferencesProvider>(context);
     UtilsProvider utilsProvider = Provider.of<UtilsProvider>(context);
+    SummaryProvider summaryProvider = Provider.of<SummaryProvider>(context);
 
     return Scaffold(
         backgroundColor: primaryColor,
-        body: _buildHome(pref, utilsProvider)
+        body: _buildHome(pref, utilsProvider, summaryProvider)
     );
   }
 
-  Widget _buildHome(PreferencesProvider pref, UtilsProvider utilsProvider) {
+  Widget _buildHome(PreferencesProvider pref, UtilsProvider utilsProvider, SummaryProvider summaryProvider) {
+    if (mounted) {
+      Timer t = Timer(const Duration(milliseconds: 500), () {
+        setState(() {
+          deactivateTimer = true;
+        });
+        if (_isGetSummary) {
+          print("mengambil data");
+          setState(() {
+            _isGetSummary = false;
+          });
+          getSummary(summaryProvider, pref, utilsProvider);
+        }
+      });
+
+      if (deactivateTimer) {
+        setState(() {
+          t.cancel();
+        });
+      } else {
+        if (_isGetSummary) {
+          t;
+        } else {
+          setState(() {
+            t.cancel();
+          });
+        }
+      }
+    }
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -91,25 +125,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ChangeNotifierProvider<SummaryProvider>(
-                      create: (_) => SummaryProvider(idUser: pref.userLogin.id),
-                      child: Consumer<SummaryProvider>(
-                        builder: (context, state, _) {
-                          if (state.stateSummary == ResultState.loading) {
-                            return _buildLoadingSummary();
-                          } else if (state.stateSummary == ResultState.hasData) {
-                            var dataSummary = state.resultSummary.data;
-                            return _buildSummary(dataSummary!);
-                          } else if (state.stateSummary == ResultState.noData) {
-                            return SizedBox(height: 50, child: CustomNotificationWidget(message: state.messageSummary));
-                          } else if (state.stateSummary == ResultState.error) {
-                            return SizedBox(height: 50, child: CustomNotificationWidget(message: state.messageSummary));
-                          } else {
-                            return const SizedBox(height: 50, child: CustomNotificationWidget(message: "Error: Went Something Wrong.."));
-                          }
-                        }
-                      ),
-                    ),
+                    _buildSummary(utilsProvider),
                     const SizedBox(height: 16.0,),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,7 +177,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSummary(Summary summary) {
+  Widget _buildSummary(UtilsProvider utilsProvider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -195,7 +211,7 @@ class _HomePageState extends State<HomePage> {
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      GetFormatted().number(summary.totalOrders),
+                      GetFormatted().number(utilsProvider.summary.totalOrders),
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -218,7 +234,7 @@ class _HomePageState extends State<HomePage> {
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      GetFormatted().number(summary.todayOrders),
+                      GetFormatted().number(utilsProvider.summary.todayOrders),
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -241,7 +257,7 @@ class _HomePageState extends State<HomePage> {
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      GetFormatted().number(summary.monthOrders),
+                      GetFormatted().number(utilsProvider.summary.monthOrders),
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -264,7 +280,7 @@ class _HomePageState extends State<HomePage> {
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      GetFormatted().number(summary.yearOrders),
+                      GetFormatted().number(utilsProvider.summary.yearOrders),
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -304,7 +320,7 @@ class _HomePageState extends State<HomePage> {
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "Rp. ${GetFormatted().number(summary.totalRevenue)}",
+                      "Rp. ${GetFormatted().number(utilsProvider.summary.totalRevenue)}",
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -327,7 +343,7 @@ class _HomePageState extends State<HomePage> {
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "Rp. ${GetFormatted().number(summary.totalTodayRevenue)}",
+                      "Rp. ${GetFormatted().number(utilsProvider.summary.totalTodayRevenue)}",
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -350,7 +366,7 @@ class _HomePageState extends State<HomePage> {
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "Rp. ${GetFormatted().number(summary.totalMonthRevenue)}",
+                      "Rp. ${GetFormatted().number(utilsProvider.summary.totalMonthRevenue)}",
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -373,7 +389,7 @@ class _HomePageState extends State<HomePage> {
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "Rp. ${GetFormatted().number(summary.totalYearRevenue)}",
+                      "Rp. ${GetFormatted().number(utilsProvider.summary.totalYearRevenue)}",
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -413,7 +429,7 @@ class _HomePageState extends State<HomePage> {
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      GetFormatted().number(summary.totalProducts),
+                      GetFormatted().number(utilsProvider.summary.totalProducts),
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(color: textColorWhite, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -426,46 +442,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildLoadingSummary() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0,),
-          child: Text(
-            "Orders",
-            style: Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 20.0,),
-          ),
-        ),
-        const SizedBox(height: 16.0,),
-        const Center(
-          child: CircularProgressIndicator(),
-        ),
-        const SizedBox(height: 16.0,),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0,),
-          child: Text(
-            "Revenue",
-            style: Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 20.0,),
-          ),
-        ),
-        const SizedBox(height: 16.0,),
-        const Center(
-          child: CircularProgressIndicator(),
-        ),
-        const SizedBox(height: 16.0,),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0,),
-          child: Text(
-            "Products",
-            style: Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 20.0,),
-          ),
-        ),
-        const SizedBox(height: 16.0,),
-        const Center(
-          child: CircularProgressIndicator(),
-        ),
-      ],
-    );
+  getSummary(SummaryProvider summaryProvider, PreferencesProvider pref, UtilsProvider utilsProvider) async {
+    utilsProvider.setIndexBottomNav(0);
+
+    try {
+      final Future<SummaryResult> response = summaryProvider.fetchSummaryStore(pref.userLogin.id);
+
+      response.then((value) {
+        if (value.status) {
+          print("berhasil mengambil data");
+          utilsProvider.setSummary(value.data!);
+        } else {
+          CustomNotificationSnackbar(context: context, message: value.message);
+        }
+      });
+    } catch (e) {
+      CustomNotificationSnackbar(context: context, message: "Error : $e");
+    }
   }
 }

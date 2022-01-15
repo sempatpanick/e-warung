@@ -46,7 +46,6 @@ class _HomePageState extends State<HomePage> {
           deactivateTimer = true;
         });
         if (_isGetSummary) {
-          print("mengambil data");
           setState(() {
             _isGetSummary = false;
           });
@@ -450,7 +449,6 @@ class _HomePageState extends State<HomePage> {
 
       response.then((value) {
         if (value.status) {
-          print("berhasil mengambil data");
           utilsProvider.setSummary(value.data!);
         } else {
           CustomNotificationSnackbar(context: context, message: value.message);
